@@ -1,0 +1,13 @@
+# PyCharm files
+.idea
+*.iml
+
+# Python virtual environment
+venv
+virtualenv
+
+# Python cache
+*__pycache__*
+
+# Project's files
+.save
