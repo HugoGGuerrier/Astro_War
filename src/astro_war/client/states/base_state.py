@@ -19,12 +19,20 @@ class BaseState:
 
         self._name: str = name
         self._game = game
+        self._surface: pygame.surface.Surface = game.get_surface()
 
     # ----- State necessary methods -----
 
     def enter(self) -> None:
         """
         Method to call when the game enter the state
+        """
+
+        pass
+
+    def init(self) -> None:
+        """
+        Initialize the state
         """
 
         pass

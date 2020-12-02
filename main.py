@@ -1,6 +1,5 @@
 from src.astro_war.bootstrapper import Bootstrapper
 from src.astro_war.client import game
-from src.astro_war.client.states import splash_screen
 
 import os
 import sys
@@ -24,5 +23,4 @@ if __name__ == '__main__':
 
     # Start the application
     app = game.Game()
-    app.set_state(splash_screen.SplashScreen(app))
     app.start_app()

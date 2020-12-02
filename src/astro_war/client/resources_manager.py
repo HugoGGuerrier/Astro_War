@@ -1,12 +1,15 @@
-from src.astro_war import Config
+from src.astro_war.config import Config
+from src.astro_war.client.scaler import Scaler
 
 import pygame
 
 
 class ResourcesManager:
     """
-    This class contains all resources needed in the game
+    This class contains all resources needed
     """
+
+    _is_loaded: bool = False
 
     # ----- Fonts -----
 
@@ -68,13 +71,18 @@ class ResourcesManager:
         return pygame.mixer.Sound(Config.RES_DIR + "sound" + Config.FILE_SEPARATOR + file)
 
     @staticmethod
-    def load():
+    def load_all_resources():
         """
         Load all the resources
         """
 
-        # Load images
-        ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
+        if not ResourcesManager._is_loaded:
 
-        # Load sounds
-        ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.ogg")
+            # Load images
+            ResourcesManager.HIBER_NATION_IMG = Scaler.scale_image(ResourcesManager._load_image("hiber_nation.png"))
+
+            # Load sounds
+            ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.wav")
+
+            # Set the loaded to true
+            ResourcesManager._is_loaded = True

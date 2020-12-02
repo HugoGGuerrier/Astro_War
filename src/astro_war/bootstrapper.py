@@ -1,4 +1,5 @@
-from src.astro_war import Config, utils
+from src.astro_war.config import Config
+from src.astro_war import utils
 
 import os
 import json
@@ -22,6 +23,9 @@ class Bootstrapper:
             "V_SYNC": Config.V_SYNC,
 
             "FRAME_RATE": Config.FRAME_RATE,
+
+            "MUSIC_VOLUME": Config.MUSIC_VOLUME,
+            "SOUND_VOLUME": Config.SOUND_VOLUME,
 
             "USER_NAME": Config.USER_NAME
         }
@@ -55,23 +59,10 @@ class Bootstrapper:
 
         Config.FRAME_RATE = save_dict["FRAME_RATE"]
 
+        Config.MUSIC_VOLUME = save_dict["MUSIC_VOLUME"]
+        Config.SOUND_VOLUME = save_dict["SOUND_VOLUME"]
+
         Config.USER_NAME = save_dict["USER_NAME"]
-
-    @staticmethod
-    def load_default() -> None:
-        """
-        Load the default configuration when there is no save file
-        """
-
-        # Set the game settings
-        Config.SCREEN_SIZE = [720, 480]
-        Config.FULL_SCREEN = False
-        Config.V_SYNC = False
-
-        Config.FRAME_RATE = 60
-
-        # Set the user settings
-        Config.USER_NAME = "Looser"
 
     @staticmethod
     def bootstrap(base_dir: str, server_only: bool) -> None:
@@ -105,14 +96,11 @@ class Bootstrapper:
         # Set the save file path
         Config.SAVE_FILE = Config.BASE_DIR + ".save"
 
-        if not os.path.isfile(Config.SAVE_FILE):
-            # Create the save file if it doesn't exists and load the default config
-            tmp = open(Config.SAVE_FILE, "w")
-            tmp.close()
-            Bootstrapper.load_default()
-        else:
-            # Load the configuration
+        # Load the configuration if it exists
+        if os.path.isfile(Config.SAVE_FILE):
             try:
                 Bootstrapper.load()
             except json.decoder.JSONDecodeError as _:
-                Bootstrapper.load_default()
+                print("The save file is corrupted !")
+            except KeyError as _:
+                print("Missing parts in the save file !")

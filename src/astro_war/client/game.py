@@ -1,7 +1,11 @@
-from src.astro_war import Config, bootstrapper
-from src.astro_war.client import resources_manager, Colors
+from src.astro_war.config import Config
+from src.astro_war.bootstrapper import Bootstrapper
 from src.astro_war.client.scaler import Scaler
-from src.astro_war.client.states import base_state
+from src.astro_war.client.colors import Colors
+from src.astro_war.client.resources_manager import ResourcesManager
+from src.astro_war.client.sound_player import SoundPlayer
+from src.astro_war.client.states.base_state import BaseState
+from src.astro_war.client.states.splash_screen import SplashScreen
 
 import pygame
 
@@ -21,10 +25,21 @@ class Game:
         self._is_init: bool = False
         self._is_loaded: bool = False
         self._running: bool = False
-        self._interval: int = round(1000 / Config.FRAME_RATE)
 
-        self._state: base_state.BaseState = None
+        self._clock: pygame.time.Clock = None
+        self._state: BaseState = None
         self._surface: pygame.Surface = None
+
+    # ----- Getters -----
+
+    def get_surface(self) -> pygame.surface.Surface:
+        """
+        Get the drawing surface
+
+        return -> pygame.surface.Surface = The surface
+        """
+
+        return self._surface
 
     # ----- Internal methods -----
 
@@ -50,6 +65,12 @@ class Game:
         pygame.display.set_caption(Config.APP_NAME, Config.ICON_NAME)
         self._surface = pygame.display.set_mode(Config.SCREEN_SIZE, flags=flags, vsync=vsync)
 
+        # Initialize the sound player
+        SoundPlayer.init()
+
+        # Create the clock
+        self._clock = pygame.time.Clock()
+
         # Set the initialization to true
         self._is_init = True
 
@@ -60,7 +81,7 @@ class Game:
 
         # Display the loading screen
         loading_font = pygame.font.Font(Config.RES_DIR + "font" + Config.FILE_SEPARATOR + "Munro.ttf", 40)
-        loading_surface = loading_font.render("Loading...", False, Colors.WHITE)
+        loading_surface = loading_font.render("Loading...", False, (220, 220, 220))
         position = (
             Config.SCREEN_SIZE[0] - (loading_surface.get_width() + Scaler.scale_length(10)),
             Config.SCREEN_SIZE[1] - (loading_surface.get_height() + Scaler.scale_length(10))
@@ -69,7 +90,7 @@ class Game:
         pygame.display.flip()
 
         # Load the resources
-        resources_manager.ResourcesManager.load()
+        ResourcesManager.load_all_resources()
         self._is_loaded = True
 
     def _cleanup(self) -> None:
@@ -87,7 +108,7 @@ class Game:
         self._surface = None
 
         # Save the application config
-        bootstrapper.Bootstrapper.save()
+        Bootstrapper.save()
 
     def _handle_event(self, event: pygame.event.Event) -> None:
         """
@@ -116,9 +137,15 @@ class Game:
         if not self._is_loaded:
             self._load_res()
 
+        # Set the starting state
+        self.set_state(SplashScreen(self))
+
         # Start the game loop
         self._running = True
         while self._running:
+
+            # Get the delta time
+            dt = self._clock.tick(Config.FRAME_RATE)
 
             # Clear the display
             self._surface.fill(Colors.EMPTY)
@@ -128,14 +155,11 @@ class Game:
                 self._handle_event(event)
 
             # Update and render the state
-            self._state.update(self._interval)
+            self._state.update(dt)
             self._state.render()
 
             # Update the display
             pygame.display.flip()
-
-            # Wait the interval
-            pygame.time.delay(self._interval)
 
         # Exit the application
         self._cleanup()
@@ -147,7 +171,7 @@ class Game:
 
         self._running = False
 
-    def set_state(self, state: base_state.BaseState):
+    def set_state(self, state: BaseState):
         """
         Set the current game state
 
@@ -162,3 +186,4 @@ class Game:
         # Enter the next state
         self._state = state
         self._state.enter()
+        self._state.init()
