@@ -140,6 +140,9 @@ class Game:
         # Set the starting state
         self.set_state(SplashScreen(self))
 
+        # Reset the clock
+        self._clock.tick()
+
         # Start the game loop
         self._running = True
         while self._running:
