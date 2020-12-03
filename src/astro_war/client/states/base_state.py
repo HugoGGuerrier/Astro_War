@@ -30,13 +30,6 @@ class BaseState:
 
         pass
 
-    def init(self) -> None:
-        """
-        Initialize the state
-        """
-
-        pass
-
     def exit(self) -> None:
         """
         Method to call when the game exit the state

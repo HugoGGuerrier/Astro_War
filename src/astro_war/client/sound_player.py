@@ -26,8 +26,10 @@ class SoundPlayer:
         Play a music by replacing the current
         """
 
-        # Stop the current music
-        if SoundPlayer._music_channel.get_busy():
-            SoundPlayer._music_channel.stop()
+        # Verify the sound is different than the current
+        if SoundPlayer._music_channel.get_sound() != sound:
+            # Stop the current music
+            if SoundPlayer._music_channel.get_busy():
+                SoundPlayer._music_channel.stop()
 
-        SoundPlayer._music_channel.play(sound, loops=loops)
+            SoundPlayer._music_channel.play(sound, loops=loops)

@@ -1,5 +1,5 @@
 from src.astro_war.client.states.base_state import BaseState
-from src.astro_war.client.states.menu import Menu
+from src.astro_war.client.states.main_menu import MainMenu
 from src.astro_war.config import Config
 from src.astro_war.client.resources_manager import ResourcesManager
 from src.astro_war.client.sound_player import SoundPlayer
@@ -41,18 +41,14 @@ class SplashScreen(BaseState):
         Function to call when the animation is finished and you want to go to the next state
         """
 
-        self._game.set_state(Menu(self._game))
+        self._game.set_state(MainMenu(self._game))
 
     # ----- State necessary methods -----
 
-    def enter(self):
+    def enter(self) -> None:
         # Play the menu music
         SoundPlayer.play_music(self._menu_music)
 
-        # Reset the animation
-        self._image_animation.reset()
-
-    def init(self):
         # Compute the image position
         self._image_pos = (
             (Config.SCREEN_SIZE[0] / 2) - (self._splash_image.get_width() / 2),
@@ -62,10 +58,13 @@ class SplashScreen(BaseState):
         # Start the animation
         self._image_animation.start()
 
+    def exit(self) -> None:
+        # Reset the animation
+        self._image_animation.reset()
+
     def update(self, dt: int) -> None:
+        # Update the animation
         self._image_animation.update(dt)
-        pass
 
     def render(self) -> None:
         self._surface.blit(self._splash_image, self._image_pos)
-        pass

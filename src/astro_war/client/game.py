@@ -122,6 +122,9 @@ class Game:
         if event.type == pygame.QUIT:
             self.stop_app()
 
+        # Give the event to the state
+        self._state.handle(event)
+
     # ----- Application control methods -----
 
     def start_app(self) -> None:
@@ -189,4 +192,3 @@ class Game:
         # Enter the next state
         self._state = state
         self._state.enter()
-        self._state.init()
