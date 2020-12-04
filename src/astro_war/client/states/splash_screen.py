@@ -1,4 +1,3 @@
-from src.astro_war.config import Config
 from src.astro_war.client.states.base_state import BaseState
 from src.astro_war.client.states.main_menu import MainMenu
 from src.astro_war.client.resources_manager import ResourcesManager
