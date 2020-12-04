@@ -1,7 +1,7 @@
 from src.astro_war.config import Config
 from src.astro_war.client.scaler import Scaler
 
-import pygame
+import pyglet
 
 
 class ResourcesManager:
@@ -9,43 +9,42 @@ class ResourcesManager:
     This class contains all resources needed
     """
 
-    _is_loaded: bool = False
-
     # ----- Fonts -----
 
-    @staticmethod
-    def MUNRO_FONT(size):
-        return ResourcesManager._load_font("Munro.ttf", size)
+    MUNRO_FONT: str = "Munro"
+
+    # ----- Themes -----
+
+    MAIN_MENU_THEME: str = None
 
     # ----- Images -----
 
     # --- Menu images
 
-    HIBER_NATION_IMG: pygame.surface.Surface = None
+    HIBER_NATION_IMG: pyglet.image.AbstractImage = None
 
     # ----- Sounds -----
 
     # --- Music
 
-    MENU_MUSIC: pygame.mixer.Sound = None
+    MENU_MUSIC: pyglet.media.Source = None
 
     # ----- Loading methods -----
 
     @staticmethod
-    def _load_font(file: str, size: int) -> pygame.font.Font:
+    def _load_font(file: str) -> None:
         """
         A short function to load a font file
 
         params :
             - file: str = The font file to load
-
-        return -> pygame.font.Font = The loaded font
         """
 
-        return pygame.font.Font(Config.RES_DIR + "font" + Config.FILE_SEPARATOR + file, size)
+        pyglet.font.add_file(Config.RES_DIR + "font" + Config.FILE_SEPARATOR + file)
+        pyglet.font.load("Munro")
 
     @staticmethod
-    def _load_image(file: str) -> pygame.surface.Surface:
+    def _load_image(file: str) -> pyglet.image.AbstractImage:
         """
         A short function to load an image file
 
@@ -55,10 +54,10 @@ class ResourcesManager:
         return -> pygame.surface.Surface = The loaded image in a surface
         """
 
-        return pygame.image.load(Config.RES_DIR + "img" + Config.FILE_SEPARATOR + file)
+        return pyglet.image.load(Config.RES_DIR + "img" + Config.FILE_SEPARATOR + file)
 
     @staticmethod
-    def _load_sound(file: str) -> pygame.mixer.Sound:
+    def _load_sound(file: str) -> pyglet.media.Source:
         """
         A short function to load an sound file
 
@@ -68,7 +67,7 @@ class ResourcesManager:
         return -> pygame.mixer.Sound = The loaded sound
         """
 
-        return pygame.mixer.Sound(Config.RES_DIR + "sound" + Config.FILE_SEPARATOR + file)
+        return pyglet.media.load(Config.RES_DIR + "sound" + Config.FILE_SEPARATOR + file)
 
     @staticmethod
     def load_all_resources():
@@ -76,13 +75,14 @@ class ResourcesManager:
         Load all the resources
         """
 
-        if not ResourcesManager._is_loaded:
+        # Load the fonts
+        ResourcesManager._load_font("Munro.ttf")
 
-            # Load images
-            ResourcesManager.HIBER_NATION_IMG = Scaler.scale_image(ResourcesManager._load_image("hiber_nation.png"))
+        # Load the themes
+        ResourcesManager.MAIN_MENU_THEME = Config.RES_DIR + "gui" + Config.FILE_SEPARATOR + "main_menu.json"
 
-            # Load sounds
-            ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.wav")
+        # Load images
+        ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
 
-            # Set the loaded to true
-            ResourcesManager._is_loaded = True
+        # Load sounds
+        ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.wav")

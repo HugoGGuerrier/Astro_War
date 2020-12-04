@@ -1,13 +1,13 @@
 from src.astro_war.config import Config
 
-import pygame
+import pyglet
 
 
 class SoundPlayer:
 
     # ----- Attributes -----
 
-    _music_channel: pygame.mixer.Channel = None
+    _music_player: pyglet.media.Player = None
 
     # ----- Sound methods -----
 
@@ -17,19 +17,24 @@ class SoundPlayer:
         Initialize the sound player
         """
 
-        SoundPlayer._music_channel = pygame.mixer.Channel(0)
-        SoundPlayer._music_channel.set_volume(Config.MUSIC_VOLUME)
+        SoundPlayer._music_player = pyglet.media.Player()
+        SoundPlayer._music_player.volume = Config.MUSIC_VOLUME
+        SoundPlayer._music_player.loop = True
 
     @staticmethod
-    def play_music(sound: pygame.mixer.Sound, loops: int = -1):
+    def play_music(music: pyglet.media.Source):
         """
         Play a music by replacing the current
         """
 
         # Verify the sound is different than the current
-        if SoundPlayer._music_channel.get_sound() != sound:
-            # Stop the current music
-            if SoundPlayer._music_channel.get_busy():
-                SoundPlayer._music_channel.stop()
+        current_source = SoundPlayer._music_player.source
+        if current_source != music:
+            # Set the next music
+            SoundPlayer._music_player.queue(music)
 
-            SoundPlayer._music_channel.play(sound, loops=loops)
+            # Start the music playing
+            if current_source is None:
+                SoundPlayer._music_player.play()
+            else:
+                SoundPlayer._music_player.next_source()

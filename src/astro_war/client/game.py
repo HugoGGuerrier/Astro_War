@@ -7,39 +7,40 @@ from src.astro_war.client.sound_player import SoundPlayer
 from src.astro_war.client.states.base_state import BaseState
 from src.astro_war.client.states.splash_screen import SplashScreen
 
-import pygame
+import pyglet
+import time
 
 
-class Game:
+class Game(pyglet.window.Window):
     """
-    This is the main class for the game application
+    The class that is the game window, this is the main game container
     """
 
     # ----- Constructor -----
 
     def __init__(self):
         """
-        Create a new game instance
+        Create a new app deriving from the windows of pyglet
         """
 
+        # Call the super constructor
+        super().__init__(
+            width=Config.SCREEN_SIZE[0],
+            height=Config.SCREEN_SIZE[1],
+            fullscreen=Config.FULL_SCREEN,
+            caption=Config.APP_NAME,
+            vsync=Config.V_SYNC
+        )
+
+        # Set the attributes
         self._is_init: bool = False
         self._is_loaded: bool = False
         self._running: bool = False
+        self._time_accu: float = 0
+        self._interval: float = 1/Config.FRAME_RATE
 
-        self._clock: pygame.time.Clock = None
         self._state: BaseState = None
-        self._surface: pygame.Surface = None
-
-    # ----- Getters -----
-
-    def get_surface(self) -> pygame.surface.Surface:
-        """
-        Get the drawing surface
-
-        return -> pygame.surface.Surface = The surface
-        """
-
-        return self._surface
+        self._clock: pyglet.clock.Clock = None
 
     # ----- Internal methods -----
 
@@ -48,134 +49,98 @@ class Game:
         Initialize the application
         """
 
-        # Initialize pygame
-        pygame.init()
-
-        # Create the containing windows flags
-        flags: int = pygame.HWSURFACE
-        if Config.FULL_SCREEN:
-            flags |= pygame.FULLSCREEN
-
-        # Get if the vsync is on
-        vsync: int = 0
-        if Config.V_SYNC:
-            vsync = 1
-
-        # Create the game window
-        pygame.display.set_caption(Config.APP_NAME, Config.ICON_NAME)
-        self._surface = pygame.display.set_mode(Config.SCREEN_SIZE, flags=flags, vsync=vsync)
+        # Create the clock
+        self._clock = pyglet.clock.get_default()
 
         # Initialize the sound player
+        pyglet.options['audio'] = ('pulse', 'directsound', 'openal', 'silent')
         SoundPlayer.init()
 
-        # Create the clock
-        self._clock = pygame.time.Clock()
-
-        # Set the initialization to true
+        # Set the initialized to true
         self._is_init = True
 
-    def _load_res(self) -> None:
+    def _load_res(self):
         """
         Load all game resources
         """
 
-        # Display the loading screen
-        loading_font = pygame.font.Font(Config.RES_DIR + "font" + Config.FILE_SEPARATOR + "Munro.ttf", 40)
-        loading_surface = loading_font.render("Loading...", False, (220, 220, 220))
-        position = (
-            Config.SCREEN_SIZE[0] - (loading_surface.get_width() + Scaler.scale_length(10)),
-            Config.SCREEN_SIZE[1] - (loading_surface.get_height() + Scaler.scale_length(10))
+        # Display the loading text
+        pyglet.font.add_file(Config.RES_DIR + "font" + Config.FILE_SEPARATOR + "Munro.ttf")
+        pyglet.font.load("Munro")
+        loading_label = pyglet.text.Label(
+            "Loading...",
+            font_name="Munro",
+            font_size=36,
+            color=(195, 195, 195, 255),
+            x=self.width - Scaler.scale_length(10), y=Scaler.scale_length(20),
+            anchor_x="right"
         )
-        self._surface.blit(loading_surface, position)
-        pygame.display.flip()
+        loading_label.draw()
+        self.flip()
 
         # Load the resources
         ResourcesManager.load_all_resources()
+
+        # Set the loaded to true
         self._is_loaded = True
 
     def _cleanup(self) -> None:
         """
-        Method to call just before the application end
+        Method to call just before the application end to save and close properly
         """
-
-        # Close pygame
-        pygame.quit()
-
-        # Reset the class
-        self._is_init = False
-        self._running = False
-
-        self._surface = None
 
         # Save the application config
         Bootstrapper.save()
 
-    def _handle_event(self, event: pygame.event.Event) -> None:
+        # Close the window
+        self.close()
+
+    # ----- Event handling -----
+
+    def on_show(self):
         """
-        This methods handle all game events
-
-        params :
-            - event: pygame.event.Event = The event to handle
-        """
-
-        # Handle general events
-        if event.type == pygame.QUIT:
-            self.stop_app()
-
-        # Give the event to the state
-        self._state.handle(event)
-
-    # ----- Application control methods -----
-
-    def start_app(self) -> None:
-        """
-        Start the application
+        Event triggered when the window is shown
         """
 
-        # Initialize the game if it's not
-        if not self._is_init:
-            self._init_app()
-
-        # Load all resources
+        # Load the resources adn set the clock
         if not self._is_loaded:
             self._load_res()
 
-        # Set the starting state
-        self.set_state(SplashScreen(self))
+            # Set the clock callback method
+            self._clock.schedule_interval(self.update, self._interval)
 
-        # Reset the clock
-        self._clock.tick()
+        # Set the initial state if there is none
+        if self._state is None:
+            self._state = SplashScreen(self)
+            self._state.enter()
 
-        # Start the game loop
-        self._running = True
-        while self._running:
+    # ----- Application control methods -----
 
-            # Get the delta time
-            dt = self._clock.tick(Config.FRAME_RATE)
+    def update(self, dt: float):
+        """
+        Update the game state, this method is called every tick of the game
 
-            # Clear the display
-            self._surface.fill(Colors.EMPTY)
+        params :
+            - dt: float = The number of seconds since the last call
+        """
 
-            # Handle all events
-            for event in pygame.event.get():
-                self._handle_event(event)
+        # Verify that the app is running
+        if self._running:
+            # Clean the screen
+            self.clear()
 
-            # Update and render the state
-            self._state.update(dt)
+            # Update the current state
+            self._state.update(self._time_accu + dt)
+
+            # Configure the opengl scaling function
+            pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MAG_FILTER, pyglet.gl.GL_NEAREST)
+            pyglet.gl.glTexParameteri(pyglet.gl.GL_TEXTURE_2D, pyglet.gl.GL_TEXTURE_MIN_FILTER, pyglet.gl.GL_NEAREST)
+
+            # Render the state
             self._state.render()
-
-            # Update the display
-            pygame.display.flip()
-
-        # Exit the application
-        self._cleanup()
-
-    def stop_app(self) -> None:
-        """
-        Stop the application
-        """
-
-        self._running = False
+        else:
+            # Increase the time accumulator
+            self._time_accu += dt
 
     def set_state(self, state: BaseState):
         """
@@ -192,3 +157,28 @@ class Game:
         # Enter the next state
         self._state = state
         self._state.enter()
+
+    def start_app(self) -> None:
+        """
+        Start the application
+        """
+
+        # Init the application
+        if not self._is_init:
+            self._init_app()
+
+        # Start the app
+        self._running = True
+
+        pyglet.app.run()
+
+    def stop_app(self):
+        """
+        Stop the application
+        """
+
+        # Cleanup the application
+        self._cleanup()
+
+        # Close the windows
+        pyglet.app.exit()

@@ -1,6 +1,6 @@
 from src.astro_war.config import Config
 
-import pygame
+import pyglet
 
 
 class Scaler:
@@ -25,7 +25,7 @@ class Scaler:
         return round((length / Scaler._base_height) * Config.SCREEN_SIZE[1])
 
     @staticmethod
-    def scale_image(image: pygame.surface.Surface) -> pygame.surface.Surface:
+    def scale_sprite(sprite: pyglet.sprite.Sprite) -> None:
         """
         Scale an image to fit the screen
 
@@ -34,8 +34,4 @@ class Scaler:
         """
 
         scale_coef = (Config.SCREEN_SIZE[1] / Scaler._base_height) * Config.BASE_ZOOM
-        new_size = (
-            round(image.get_width() * scale_coef),
-            round(image.get_height() * scale_coef)
-        )
-        return pygame.transform.scale(image, new_size)
+        sprite.scale = scale_coef

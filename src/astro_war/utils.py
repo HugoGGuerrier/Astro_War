@@ -1,33 +1,33 @@
 import sys
 
 
-def encrypt_save(save_str: str) -> str:
+def encrypt_save(save_str: str) -> bytearray:
     """
     Encrypt a save string to avoid user modifying it :)
 
     params :
         - save_str: str = The non encrypted save string
 
-    return -> str = The encrypted string
+    return -> bytearray = The encrypted bytes
     """
 
     # Prepare the result
-    res: str = ""
+    int_list: list = list()
 
     # Iterate over the string and transform it
     for char in save_str:
-        res += chr((ord(char) + 42) % sys.maxunicode)
+        int_list.append((ord(char) + 42) % 256)
 
     # Return the result
-    return res
+    return bytearray(int_list)
 
 
-def decrypt_save(save_str: str) -> str:
+def decrypt_save(save_str: bytes) -> str:
     """
     Decrypt a save string in order to load it
 
     params :
-        - save_str: str = The encrypted save string
+        - save_str: bytes = The encrypted save string
 
     return -> str = The decrypted json string
     """
@@ -36,8 +36,8 @@ def decrypt_save(save_str: str) -> str:
     res: str = ""
 
     # Iterate over encrypted string
-    for char in save_str:
-        res += chr((ord(char) - 42) % sys.maxunicode)
+    for integer in save_str:
+        res += chr((integer - 42) % 256)
 
     # Return the result
     return res

@@ -1,4 +1,4 @@
-import pygame
+import pyglet
 
 
 class BaseState:
@@ -8,7 +8,7 @@ class BaseState:
 
     # ----- Constructor -----
 
-    def __init__(self, name: str, game):
+    def __init__(self, name: str, game: pyglet.window.Window):
         """
         Create a new state with the name and the game app
 
@@ -18,8 +18,7 @@ class BaseState:
         """
 
         self._name: str = name
-        self._game = game
-        self._surface: pygame.surface.Surface = game.get_surface()
+        self._game: pyglet.window.Window = game
 
     # ----- State necessary methods -----
 
@@ -37,7 +36,7 @@ class BaseState:
 
         pass
 
-    def handle(self, event: pygame.event.Event) -> None:
+    def handle(self, event) -> None:
         """
         Handle every pygame events
 
@@ -47,12 +46,12 @@ class BaseState:
 
         pass
 
-    def update(self, dt: int) -> None:
+    def update(self, dt: float) -> None:
         """
         Update the state with the delta time
 
         params :
-            - dt: int = The delta time
+            - dt: float = The delta time
         """
 
         pass

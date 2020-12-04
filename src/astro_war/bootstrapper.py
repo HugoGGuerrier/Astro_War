@@ -34,7 +34,7 @@ class Bootstrapper:
         save_str = json.dumps(save_dict)
 
         # Write the JSON in the save file
-        save_file = open(Config.SAVE_FILE, "w")
+        save_file = open(Config.SAVE_FILE, "wb")
         save_file.write(utils.encrypt_save(save_str))
         save_file.close()
 
@@ -45,7 +45,7 @@ class Bootstrapper:
         """
 
         # Get the decrypted save string
-        save_file = open(Config.SAVE_FILE, "r")
+        save_file = open(Config.SAVE_FILE, "rb")
         save_str: str = utils.decrypt_save(save_file.read())
         save_file.close()
 

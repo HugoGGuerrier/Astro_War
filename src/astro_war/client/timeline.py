@@ -8,7 +8,7 @@ class Timeline:
 
     # ----- Constructor -----
 
-    def __init__(self, duration: int = 0):
+    def __init__(self, duration: float = 0.0):
         """
         Create a new timeline with the wanted duration
 
@@ -16,22 +16,22 @@ class Timeline:
             - duration: int = The timeline duration in milliseconds
         """
 
-        self._duration: int = duration
-        self._time: int = 0
+        self._duration: float = duration
+        self._time: float = 0.0
         self._time_points: collections.OrderedDict = collections.OrderedDict()
         self._loop: bool = False
         self._running: bool = False
 
-        self._initial_value = 0
-        self._coef = 0
-        self._previous_value = 0
+        self._initial_value: float = 0.0
+        self._coef: float = 0.0
+        self._previous_value: float = 0.0
 
         self._update_callback = None
         self._end_callback = None
 
     # ----- Timeline controlling methods -----
 
-    def set_duration(self, duration: int) -> None:
+    def set_duration(self, duration: float) -> None:
         """
         Set the timeline duration
 
@@ -41,7 +41,7 @@ class Timeline:
 
         self._duration = duration
 
-    def set_initial_value(self, value: int) -> None:
+    def set_initial_value(self, value: float) -> None:
         """
         Set the timeline initial value
 
@@ -52,7 +52,7 @@ class Timeline:
         self._initial_value = value
         self._previous_value = value
 
-    def set_coef(self, coef: int) -> None:
+    def set_coef(self, coef: float) -> None:
         """
         Set the timeline coef
 
@@ -92,7 +92,7 @@ class Timeline:
 
         self._end_callback = callback
 
-    def add_time_point(self, time: int, value: int) -> None:
+    def add_time_point(self, time: float, value: float) -> None:
         """
         Add a new time point to the timeline
 
@@ -125,7 +125,7 @@ class Timeline:
                 prev_val = val
 
         # Return the default value
-        return self._previous_value
+        return prev_val
 
     def start(self) -> None:
         """
@@ -146,10 +146,10 @@ class Timeline:
         Reset the timeline
         """
 
-        self._time = 0
+        self._time = 0.0
         self._running = False
 
-    def update(self, dt: int) -> None:
+    def update(self, dt: float) -> None:
         """
         Update the timeline with the delta time
 
@@ -169,12 +169,13 @@ class Timeline:
                     self._time = self._time % self._duration
                 else:
                     self._time = self._duration
+                    self.pause()
                     if self._end_callback is not None:
                         self._end_callback()
 
             # Get the current value and update the callback if needed
-            cur_val = self.get_value()
-            if cur_val != self._previous_value:
-                self._previous_value = cur_val
-                if self._update_callback is not None:
+            if self._update_callback is not None:
+                cur_val = self.get_value()
+                if cur_val != self._previous_value:
+                    self._previous_value = cur_val
                     self._update_callback(cur_val * self._coef)
