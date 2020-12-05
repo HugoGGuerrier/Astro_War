@@ -113,6 +113,20 @@ class Game(pyglet.window.Window):
         if self._state is None:
             self.set_state(SplashScreen(self))
 
+    def on_close(self):
+        """
+        Method that handle the game close
+        """
+
+        self.stop_app()
+
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
+        """
+        This event triggers when a keyboard key is pressed
+        """
+
+        print("Key pressed : " + str(symbol))
+
     # ----- Application control methods -----
 
     def update(self, dt: float):

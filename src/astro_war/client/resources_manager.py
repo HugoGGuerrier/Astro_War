@@ -15,10 +15,6 @@ class ResourcesManager:
 
     # ----- Images -----
 
-    # --- GUI images
-
-    MAIN_BTN_IMG: pyglet.image.AbstractImage = None
-
     # --- Menu images
 
     HIBER_NATION_IMG: pyglet.image.AbstractImage = None
@@ -79,8 +75,6 @@ class ResourcesManager:
         ResourcesManager._load_font("Munro.ttf")
 
         # Load images
-        ResourcesManager.MAIN_BTN_IMG = ResourcesManager._load_image("gui" + Config.FILE_SEPARATOR + "main_btn.png")
-
         ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
 
         # Load sounds
