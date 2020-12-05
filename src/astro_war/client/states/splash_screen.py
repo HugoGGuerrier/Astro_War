@@ -39,11 +39,11 @@ class SplashScreen(BaseState):
         Function to call when the animation is finished and you want to go to the next state
         """
 
-        self._game.set_state(MainMenu(self._game))
+        self._game.set_state(MainMenu(self._game), fade_in_black=True)
 
     # ----- State necessary methods -----
 
-    def enter(self) -> None:
+    def enter(self, args) -> None:
         # Play the menu music
         SoundPlayer.play_music(self._menu_music)
 

@@ -27,6 +27,7 @@ class UIElement:
         self.y: int = y
         self.width: int = width
         self.height: int = height
+        self.opacity: float = 1.0
 
         self._batch: pyglet.graphics.Batch = None
         self._group: pyglet.graphics.Group = None

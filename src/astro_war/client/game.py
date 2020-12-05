@@ -6,6 +6,7 @@ from src.astro_war.client.resources_manager import ResourcesManager
 from src.astro_war.client.sound_player import SoundPlayer
 from src.astro_war.client.states.base_state import BaseState
 from src.astro_war.client.states.splash_screen import SplashScreen
+from src.astro_war.client.states.main_menu import MainMenu
 
 import pyglet
 import time
@@ -144,12 +145,13 @@ class Game(pyglet.window.Window):
             # Increase the time accumulator
             self._time_accu += dt
 
-    def set_state(self, state: BaseState):
+    def set_state(self, state: BaseState, **kwargs):
         """
         Set the current game state
 
         params :
             - state: base_state.BaseState = The state to set
+            - **kwargs = Aguments for the next state
         """
 
         # Exit the previous state
@@ -159,7 +161,7 @@ class Game(pyglet.window.Window):
         # Enter the next state
         print("--- Enter " + state.name + " state")
         self._state = state
-        self._state.enter()
+        self._state.enter(kwargs)
 
     def start_app(self) -> None:
         """

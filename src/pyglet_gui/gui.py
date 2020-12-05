@@ -17,11 +17,12 @@ class GUI:
             _y=0
     ):
         # Assign attributes
-        self._window = window
-        self._batch = batch
-        self._group = group
-        self._pos = (_x, _y)
-        self._ui_elements = list()
+        self._window: pyglet.window.Window = window
+        self._batch: pyglet.graphics.Group = batch
+        self._group: pyglet.graphics.Group = group
+        self._pos: tuple = (_x, _y)
+        self._opacity: float = 1.0
+        self._ui_elements: list = list()
 
         # Set the event handlers
         @self._window.event
@@ -64,6 +65,12 @@ class GUI:
     def set_pos(self, x, y):
         self._pos = (x, y)
         for elem in self._ui_elements:
+            elem.rebuild(self)
+
+    def set_opacity(self, opacity: int):
+        self._opacity = (opacity / 255) % 1.0
+        for elem in self._ui_elements:
+            elem.opacity = self._opacity
             elem.rebuild(self)
 
     # ----- Elements -----

@@ -1,5 +1,6 @@
 from src.astro_war.config import Config
 from src.astro_war.client.scaler import Scaler
+from src.astro_war.client.timeline import Timeline
 from src.astro_war.client.resources_manager import ResourcesManager
 from src.astro_war.client.colors import Colors
 from src.astro_war.client.states.base_state import BaseState
@@ -48,24 +49,52 @@ class MainMenu(BaseState):
         self._bg_group: pyglet.graphics.OrderedGroup = pyglet.graphics.OrderedGroup(0)
         self._fg_group: pyglet.graphics.OrderedGroup = pyglet.graphics.OrderedGroup(1)
         self._ui_group: pyglet.graphics.OrderedGroup = pyglet.graphics.OrderedGroup(2)
+        self._mask_group: pyglet.graphics.OrderedGroup = pyglet.graphics.OrderedGroup(3)
+
+        # Declare the mask and it's animation
+        self._mask: pyglet.shapes.Rectangle = None
+        self._mask_animation: Timeline = Timeline(1.1)
+        self._mask_animation.set_loop(False)
+        self._mask_animation.set_initial_value(1.0)
+        self._mask_animation.add_time_point(1.0, 0.0)
 
         # Get all the state resources
 
-        # Create main menu buttons
+        # Assign the ui attributes
         self._gui: pyglet_gui.GUI = None
         self._online_btn: MainMenuButton = None
         self._local_btn: MainMenuButton = None
         self._settings_btn: MainMenuButton = None
         self._quit_btn: MainMenuButton = None
 
+        # Declare the menu elements list
+        self._menu_elements: list = list()
+
     # ----- State necessary methods -----
 
-    def enter(self):
+    def enter(self, args):
+
+        # Check if you have to fade in
+        if args.get("fade_in_black", False):
+            # Create the mask
+            self._mask = pyglet.shapes.Rectangle(
+                x=0,
+                y=0,
+                width=self._game.width,
+                height=self._game.height,
+                color=Colors.BLACK,
+                batch=self._batch,
+                group=self._mask_group
+            )
+
+            # Start the mask animation
+            self._mask_animation.start()
+
         # Create the GUI and set its position
         self._gui = pyglet_gui.GUI(self._game, self._batch, self._ui_group)
         self._gui.set_pos(self._game.width // 2, Scaler.scale_length(10))
 
-        # Compute the button position and size
+        # Compute the button spacing
         btn_space = Scaler.scale_length(10)
 
         # Create the gui elements
@@ -83,18 +112,18 @@ class MainMenu(BaseState):
         # Set the buttons callback
         self._quit_btn.on_click = self._game.stop_app
 
-    def exit(self):
-        pass
-
     def handle(self, event) -> None:
         # Handle buttons event
         pass
 
     def update(self, dt: int) -> None:
-        # Update the ui manager
+        # Update the mask animation if there is the need to
+        if not self._mask_animation.is_finish() and self._mask_animation.is_running():
+            self._mask_animation.update(dt)
+            self._mask.opacity = self._mask_animation.get_value() * 255
         pass
 
     def render(self) -> None:
-        # Render the gui
+        # Render the menu
         self._batch.draw()
         pass

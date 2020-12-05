@@ -64,6 +64,7 @@ class Button(UIElement):
 
         # Assign internal attributes
         self._is_clicked: bool = False
+        self._is_hovered: bool = False
         self._bg: pyglet.shapes.Rectangle = None
         self._label: pyglet.text.Label = None
         self._borders: list = list()
@@ -94,35 +95,41 @@ class Button(UIElement):
             # Check if the button is hovered
             if self._is_hover(x, y):
 
+                # Set the hovered state to true
+                self._is_hovered = True
+
                 # Set the background color
                 self._bg.color = self.bg_hover[:-1]
-                self._bg.opacity = self.bg_hover[-1]
+                self._bg.opacity = self.bg_hover[-1] * self.opacity
 
                 # Set the label color
                 if self.label_hover is not None:
-                    self._label.color = self.label_hover
+                    self._label.color = self.label_hover[:-1] + (round(self.label_hover[-1] * self.opacity),)
 
                 # Set the borders color
                 if self.border_hover is not None:
                     for border in self._borders:
                         border.color = self.border_hover[:-1]
-                        border.opacity = self.border_hover[-1]
+                        border.opacity = self.border_hover[-1] * self.opacity
 
-            else:
+            elif self._is_hovered:
+
+                # Set the hovered state to false
+                self._is_hovered = False
 
                 # Reset the background color
                 self._bg.color = self.bg_color[:-1]
-                self._bg.opacity = self.bg_color[-1]
+                self._bg.opacity = self.bg_color[-1] * self.opacity
 
                 # Reset the label color
                 if self.label_hover is not None:
-                    self._label.color = self.label_color
+                    self._label.color = self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),)
 
                 # Reset the borders color
                 if self.border_hover is not None:
                     for border in self._borders:
                         border.color = self.border_color[:-1]
-                        border.opacity = self.border_color[-1]
+                        border.opacity = self.border_color[-1] * self.opacity
 
     def on_mouse_drag(self, x: int, y: int, button: int, mod: int):
         # Just do the same as mouse move
@@ -141,7 +148,7 @@ class Button(UIElement):
 
             # Set the background color
             self._bg.color = self.bg_press[:-1]
-            self._bg.opacity = self.bg_press[-1]
+            self._bg.opacity = self.bg_press[-1] * self.opacity
 
             # Set the label color
             if self.label_press is not None:
@@ -151,7 +158,7 @@ class Button(UIElement):
             if self.border_press is not None:
                 for border in self._borders:
                     border.color = self.border_press[:-1]
-                    border.opacity = self.border_press[-1]
+                    border.opacity = self.border_press[-1] * self.opacity
 
     def on_mouse_release(self, x, y, button, mod):
         """
@@ -198,14 +205,14 @@ class Button(UIElement):
             batch=self._batch,
             group=pyglet.graphics.OrderedGroup(0, parent=self._group)
         )
-        self._bg.opacity = self.bg_color[-1]
+        self._bg.opacity = self.bg_color[-1] * self.opacity
 
         # Create the label text
         self._label = pyglet.text.Label(
             text=self.text,
             font_name=self.font_name,
             font_size=self.font_size,
-            color=self.label_color,
+            color=self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),),
             anchor_x="center",
             anchor_y="center",
             x=(self.x + gui_x) + self.width // 2,
@@ -274,4 +281,37 @@ class Button(UIElement):
 
         # Set the borders opacity
         for border in self._borders:
-            border.opacity = self.border_color[-1]
+            border.opacity = self.border_color[-1] * self.opacity
+
+    def rebuild(self, gui):
+        """
+        Rebuild the button with the new GUI state
+
+        Add the button to the wanted GUI
+
+        params :
+            - gui : The parent GUI
+        """
+
+        # Get the gui attributes
+        gui_x, gui_y = gui.get_pos()
+
+        # Rebuild the background
+        self._bg.x = self.x + gui_x
+        self._bg.y = self.y + gui_y
+        self._bg.width = self.width
+        self._bg.height = self.height
+        self._bg.color = self.bg_color[:-1]
+        self._bg.opacity = self.bg_color[-1] * self.opacity
+
+        # Rebuild the label
+        self._label.x = (self.x + gui_x) + self.width // 2
+        self._label.y = (self.y + gui_y) + self.height // 2
+        self._label.text = self.text
+        self._label.font_name = self.font_name
+        self._label.font_size = self.font_size
+        self._label.color = self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),)
+
+        # Rebuild the borders
+        for border in self._borders:
+            border.opacity = self.border_color[-1] * self.opacity

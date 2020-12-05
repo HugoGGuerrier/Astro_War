@@ -22,9 +22,12 @@ class BaseState:
 
     # ----- State necessary methods -----
 
-    def enter(self) -> None:
+    def enter(self, args: dict) -> None:
         """
         Method to call when the game enter the state
+
+        params :
+            - args: dict = Arguments for the state
         """
 
         pass

@@ -127,6 +127,20 @@ class Timeline:
         # Return the default value
         return prev_val
 
+    def is_running(self) -> bool:
+        """
+        Get if the timeline is currently running
+        """
+
+        return self._running
+
+    def is_finish(self) -> bool:
+        """
+        Get if the Timeline is finish
+        """
+
+        return self._time >= self._duration
+
     def start(self) -> None:
         """
         Start the timeline
