@@ -78,4 +78,4 @@ class ResourcesManager:
         ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
 
         # Load sounds
-        ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.wav")
+        ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.ogg")

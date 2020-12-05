@@ -1,6 +1,7 @@
 from src.astro_war.config import Config
 from src.astro_war.client.scaler import Scaler
 from src.astro_war.client.resources_manager import ResourcesManager
+from src.astro_war.client.colors import Colors
 from src.astro_war.client.states.base_state import BaseState
 
 from src import pyglet_gui
@@ -19,7 +20,7 @@ class MainMenuButton(pyglet_gui.Button):
             y=y,
             width=Scaler.scale_length(200),
             height=Scaler.scale_length(50),
-            color=(243, 119, 54, 160),
+            color=Colors.MAIN_COLOR + (160,),
             font_name="Munro",
             font_size=Scaler.scale_length(20),
             lab_color=(255, 255, 255, 255),
@@ -28,8 +29,8 @@ class MainMenuButton(pyglet_gui.Button):
             border_padding=Scaler.scale_length(5)
         )
         self.x = -(self.width // 2)
-        self.bg_hover = (243, 119, 54, 215)
-        self.bg_press = (243, 119, 54, 255)
+        self.bg_hover = Colors.MAIN_COLOR + (215,)
+        self.bg_press = Colors.MAIN_COLOR + (255,)
 
 
 class MainMenu(BaseState):

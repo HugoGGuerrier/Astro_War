@@ -3,8 +3,13 @@ class Colors:
     This class contains all colors
     """
 
+    # ----- Common colors -----
+
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
+
+    # ----- App colors -----
+    MAIN_COLOR = (243, 119, 54)
