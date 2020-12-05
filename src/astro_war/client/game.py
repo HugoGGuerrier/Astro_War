@@ -84,17 +84,6 @@ class Game(pyglet.window.Window):
         # Set the loaded to true
         self._is_loaded = True
 
-    def _cleanup(self) -> None:
-        """
-        Method to call just before the application end to save and close properly
-        """
-
-        # Save the application config
-        Bootstrapper.save()
-
-        # Close the window
-        self.close()
-
     # ----- Event handling -----
 
     def on_show(self):
@@ -192,7 +181,10 @@ class Game(pyglet.window.Window):
         """
 
         # Cleanup the application
-        self._cleanup()
+        Bootstrapper.save()
+
+        # Clear the window
+        self.clear()
 
         # Close the windows
         pyglet.app.exit()
