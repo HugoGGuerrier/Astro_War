@@ -19,7 +19,7 @@ class MainMenuButton(pyglet_gui.Button):
             y=y,
             width=Scaler.scale_length(200),
             height=Scaler.scale_length(50),
-            color=(255, 0, 174, 60),
+            color=(243, 119, 54, 160),
             font_name="Munro",
             font_size=Scaler.scale_length(20),
             lab_color=(255, 255, 255, 255),
@@ -28,8 +28,8 @@ class MainMenuButton(pyglet_gui.Button):
             border_padding=Scaler.scale_length(5)
         )
         self.x = -(self.width // 2)
-        self.bg_hover = (255, 0, 174, 215)
-        self.bg_press = (255, 120, 212, 215)
+        self.bg_hover = (243, 119, 54, 215)
+        self.bg_press = (243, 119, 54, 255)
 
 
 class MainMenu(BaseState):
