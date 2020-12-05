@@ -13,11 +13,11 @@ class ResourcesManager:
 
     MUNRO_FONT: str = "Munro"
 
-    # ----- Themes -----
-
-    MAIN_MENU_THEME: str = None
-
     # ----- Images -----
+
+    # --- GUI images
+
+    MAIN_BTN_IMG: pyglet.image.AbstractImage = None
 
     # --- Menu images
 
@@ -78,10 +78,9 @@ class ResourcesManager:
         # Load the fonts
         ResourcesManager._load_font("Munro.ttf")
 
-        # Load the themes
-        ResourcesManager.MAIN_MENU_THEME = Config.RES_DIR + "gui" + Config.FILE_SEPARATOR + "main_menu.json"
-
         # Load images
+        ResourcesManager.MAIN_BTN_IMG = ResourcesManager._load_image("gui" + Config.FILE_SEPARATOR + "main_btn.png")
+
         ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
 
         # Load sounds

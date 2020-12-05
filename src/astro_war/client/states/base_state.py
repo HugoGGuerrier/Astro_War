@@ -17,7 +17,7 @@ class BaseState:
             - game = The game app, to render the scene
         """
 
-        self._name: str = name
+        self.name: str = name
         self._game: pyglet.window.Window = game
 
     # ----- State necessary methods -----

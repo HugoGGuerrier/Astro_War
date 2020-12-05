@@ -16,14 +16,11 @@ class SplashScreen(BaseState):
     # ----- Constructor ------
 
     def __init__(self, game):
-        super().__init__("SplashScreen", game)
+        super().__init__("Splash Screen", game)
 
         # Get the state resources
         self._splash_image = pyglet.sprite.Sprite(ResourcesManager.HIBER_NATION_IMG)
         self._menu_music = ResourcesManager.MENU_MUSIC
-
-        # Define the state variables
-        self._image_pos = (0, 0)
 
         # Define the image animation
         self._image_animation: Timeline = Timeline(4)
@@ -33,7 +30,7 @@ class SplashScreen(BaseState):
         self._image_animation.add_time_point(1.25, 1)
         self._image_animation.add_time_point(2.75, 1)
         self._image_animation.add_time_point(3.5, 0)
-        self._image_animation.set_end_callback(None)
+        self._image_animation.set_end_callback(self.animation_end)
 
     # ----- Class methods -----
 

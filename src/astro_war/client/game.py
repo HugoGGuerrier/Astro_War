@@ -111,8 +111,7 @@ class Game(pyglet.window.Window):
 
         # Set the initial state if there is none
         if self._state is None:
-            self._state = SplashScreen(self)
-            self._state.enter()
+            self.set_state(SplashScreen(self))
 
     # ----- Application control methods -----
 
@@ -155,6 +154,7 @@ class Game(pyglet.window.Window):
             self._state.exit()
 
         # Enter the next state
+        print("--- Enter " + state.name + " state")
         self._state = state
         self._state.enter()
 
