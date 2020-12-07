@@ -313,5 +313,6 @@ class Button(UIElement):
         self._label.color = self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),)
 
         # Rebuild the borders
+        # TODO
         for border in self._borders:
             border.opacity = self.border_color[-1] * self.opacity

@@ -1,4 +1,4 @@
-# Astro War : The Cosmic Battle
+# The Cosmic Battle
 
 ## Setup development environment
 
