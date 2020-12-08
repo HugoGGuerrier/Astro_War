@@ -1,6 +1,8 @@
 # different models for the game
 import math
 
+import pyglet
+
 
 class Ship:
     """
@@ -59,13 +61,14 @@ class Ship:
             # for the self.y, we will have to change with the orientation, need the images to predict the formula
             # x′=(x−p) cos(θ)−(y−q) sin(θ) + p,
             # y′= (x−p) sin(θ) + (y−q) cos(θ) + q. #306 = primary location with anchor
-            base_x = 306
-            base_y = 175 + self.sprite.height
-            xcoord = (self.sprite.x - base_x) * math.cos(math.radians(self.orientation)) - (self.sprite.y -base_y) * math.sin(
-                math.radians(self.orientation)) + base_x
-            ycoord = (self.sprite.x - base_x) * math.sin(math.radians(-self.orientation)) + (self.sprite.y-base_y) * math.cos(
-                math.radians(-self.orientation)) + base_y
-            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color, self.missile_sprite))
+            base_x = self.sprite.x
+            base_y = self.sprite.y + self.sprite.height/2
+            print(self.sprite.y)
+            xcoord = (base_x - self.sprite.x) * math.cos(math.radians(-self.orientation)) - (base_y - self.sprite.y) * math.sin(
+                math.radians(-self.orientation)) + self.sprite.x
+            ycoord = (base_x - self.sprite.x) * math.sin(math.radians(-self.orientation)) + (base_y - self.sprite.y) * math.cos(
+                math.radians(-self.orientation)) + self.sprite.y
+            self.missile.append(Missile(xcoord,ycoord, self.orientation, self.color, self.missile_sprite))
 
     def rotateLeft(self):  # will be called while player press the button
         """
@@ -126,7 +129,7 @@ class Missile:
         """
 
         self.sprite = sprite
-        self.sprite.x = x
+        self.sprite.x = x - self.sprite.width/2
         self.sprite.y = y
         self.sprite.rotation = orientation
         self.orientation = orientation

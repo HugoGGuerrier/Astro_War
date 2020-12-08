@@ -28,8 +28,8 @@ class TestFlo(BaseState):
         self._ship_image.image.anchor_y = self._ship_image.height/2
 
         self._missile_image = pyglet.sprite.Sprite(ResourcesManager.MISSILE_IMG)
-        self._missile_image.image.anchor_x = self._missile_image.width / 2
-        self._missile_image.image.anchor_y = self._missile_image.height / 2
+       #65362 self._missile_image.image.anchor_x = self._missile_image.width / 2
+       # self._missile_image.image.anchor_y = self._missile_image.height / 2
 
 
         self.shade = True
@@ -75,7 +75,7 @@ class TestFlo(BaseState):
             self.my_ship.shoot()
             self.pressed_buttons.remove(32)
 
-     #   self.my_ship.fly()
+        self.my_ship.fly()
         for i in self.my_ship.missile:
             i.fly()
 
