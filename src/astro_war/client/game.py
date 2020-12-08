@@ -124,7 +124,8 @@ class Game(pyglet.window.Window):
         This event triggers when a keyboard key is pressed
         """
         print("Key released : " + str(symbol))
-        self._state.pressed_buttons.remove(symbol)
+        if symbol in self._state.pressed_buttons :
+            self._state.pressed_buttons.remove(symbol)
 
     # ----- Application control methods -----
 

@@ -25,23 +25,26 @@ class Ship:
     power = None  # laser, blade, etc
     cannon = None  # coord of the cannon, calculated with orientation,x,y and the skin
     sprite = None
+    missile_sprite = None #missile sprite, given with the color in the futur (if blue, then missile is blue)
 
     # var for calc
     rotation = 1  # we turn 1 degree by 1 degree
     move = 1  # we move 1 pix by 1 pix
 
-    def __init__(self, color, sprite):
+    def __init__(self, color, sprite, missile_sprite):
         """
         Create a ship with coord to place it and a color (plus a sprite)
         No need coord, will work directly on sprite x and y
         """
 
+        self.missile_sprite = missile_sprite
         self.sprite = sprite
         self.hitboxes = None  # will depend of the image
         self.status = 2
         self.color = color
         self.orientation = 0  # didn't rotate yet
-        self.cannon = None  # find the formula, certainly (self.x+lenght(skin))/2 if the cannon is centred
+        self.cannon = self.sprite.width/2  # find the formula, certainly (self.x+lenght(skin))/2 if the cannon is centred
+        self.missile = []
 
 
 
@@ -49,12 +52,20 @@ class Ship:
         """
         create a Missile
         """
-        if (self.power != "laser"):  # if we have a power that modifies the shoot
+        if (self.power == "laser"):  # if we have a power that modifies the shoot
             # shoot laser
             self.power = None
         else:  # if we use a normal shoot
             # for the self.y, we will have to change with the orientation, need the images to predict the formula
-            M = Missile(self.cannon, self.y, self.orientation, self.color)
+            # x′=(x−p) cos(θ)−(y−q) sin(θ) + p,
+            # y′= (x−p) sin(θ) + (y−q) cos(θ) + q. #306 = primary location with anchor
+            base_x = 306
+            base_y = 175 + self.sprite.height
+            xcoord = (self.sprite.x - base_x) * math.cos(math.radians(self.orientation)) - (self.sprite.y -base_y) * math.sin(
+                math.radians(self.orientation)) + base_x
+            ycoord = (self.sprite.x - base_x) * math.sin(math.radians(-self.orientation)) + (self.sprite.y-base_y) * math.cos(
+                math.radians(-self.orientation)) + base_y
+            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color, self.missile_sprite))
 
     def rotateLeft(self):  # will be called while player press the button
         """
@@ -105,14 +116,19 @@ class Missile:
     orientation = None
     speed = None  # will decrease in time
     color = None  # will decide which ship to destroy
+    sprite = None
 
-    def __init__(self, x, y, orientation, color):
+    move = 1  # we move 1 pix by 1 pix
+
+    def __init__(self, x, y, orientation, color, sprite):
         """
         create a missile, given initial coord, an orientation to go straight and a color to identify enemies
         """
 
-        self.x = x
-        self.y = y
+        self.sprite = sprite
+        self.sprite.x = x
+        self.sprite.y = y
+        self.sprite.rotation = orientation
         self.orientation = orientation
         self.color = color
         self.speed = None  # will be a variable base_speed
@@ -121,8 +137,8 @@ class Missile:
         """
         called regularly, the missile goes straight
         """
-        self.x = self.move * math.cos(math.radians(self.orientation))  # check formula with visual
-        self.y = self.move * math.sin(math.radians(self.orientation))
+        self.sprite.y += self.move * math.cos(math.radians(self.orientation))
+        self.sprite.x += self.move * math.sin(math.radians(self.orientation))
         # check here if we collide smth?
 
 

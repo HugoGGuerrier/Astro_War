@@ -21,17 +21,21 @@ class TestFlo(BaseState):
         super().__init__("Test Flo", game)
 
         # Get the state resources
-        self._ship_image = pyglet.sprite.Sprite(ResourcesManager.SHIP_IMG)
         self._menu_music = ResourcesManager.MENU_MUSIC
 
+        self._ship_image = pyglet.sprite.Sprite(ResourcesManager.SHIP_IMG)
         self._ship_image.image.anchor_x = self._ship_image.width/2
         self._ship_image.image.anchor_y = self._ship_image.height/2
+
+        self._missile_image = pyglet.sprite.Sprite(ResourcesManager.MISSILE_IMG)
+        self._missile_image.image.anchor_x = self._missile_image.width / 2
+        self._missile_image.image.anchor_y = self._missile_image.height / 2
 
 
         self.shade = True
         self.pressed_buttons = []
 
-        self.my_ship = Ship("blue",self._ship_image)
+        self.my_ship = Ship("blue", self._ship_image, self._missile_image)
 
     # ----- Class methods -----
 
@@ -63,13 +67,20 @@ class TestFlo(BaseState):
         elif self._ship_image.opacity >253:
             self.shade = True
 
-        if 65361 in self.pressed_buttons :
+        if 65361 in self.pressed_buttons:
             self.my_ship.rotateLeft()
-        if 65363 in self.pressed_buttons :
+        if 65363 in self.pressed_buttons:
             self.my_ship.rotateRight()
+        if 32 in self.pressed_buttons:
+            self.my_ship.shoot()
+            self.pressed_buttons.remove(32)
 
-        self.my_ship.fly()
+     #   self.my_ship.fly()
+        for i in self.my_ship.missile:
+            i.fly()
 
     def render(self) -> None:
         # Render the image
         self.my_ship.sprite.draw()
+        for i in self.my_ship.missile:
+            i.sprite.draw()
