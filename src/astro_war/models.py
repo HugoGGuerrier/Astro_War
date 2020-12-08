@@ -1,6 +1,6 @@
 # different models for the game
 import math
-
+import copy
 import pyglet
 
 
@@ -68,7 +68,7 @@ class Ship:
                 math.radians(-self.orientation)) + self.sprite.x
             ycoord = (base_x - self.sprite.x) * math.sin(math.radians(-self.orientation)) + (base_y - self.sprite.y) * math.cos(
                 math.radians(-self.orientation)) + self.sprite.y
-            self.missile.append(Missile(xcoord,ycoord, self.orientation, self.color, self.missile_sprite))
+            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color, self.missile_sprite))
 
     def rotateLeft(self):  # will be called while player press the button
         """
@@ -142,6 +142,7 @@ class Missile:
         """
         self.sprite.y += self.move * math.cos(math.radians(self.orientation))
         self.sprite.x += self.move * math.sin(math.radians(self.orientation))
+        print(self.orientation)
         # check here if we collide smth?
 
 
