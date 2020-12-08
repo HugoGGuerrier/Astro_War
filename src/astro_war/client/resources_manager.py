@@ -18,6 +18,7 @@ class ResourcesManager:
     # --- Menu images
 
     HIBER_NATION_IMG: pyglet.image.AbstractImage = None
+    SHIP_IMG: pyglet.image.AbstractImage = None
 
     # ----- Sounds -----
 
@@ -76,6 +77,7 @@ class ResourcesManager:
 
         # Load images
         ResourcesManager.HIBER_NATION_IMG = ResourcesManager._load_image("hiber_nation.png")
+        ResourcesManager.SHIP_IMG = ResourcesManager._load_image("ship.png")
 
         # Load sounds
         ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.ogg")

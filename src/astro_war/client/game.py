@@ -1,3 +1,4 @@
+from src.astro_war.client.states.test_flo import TestFlo
 from src.astro_war.config import Config
 from src.astro_war.bootstrapper import Bootstrapper
 from src.astro_war.client.scaler import Scaler
@@ -101,7 +102,8 @@ class Game(pyglet.window.Window):
 
         # Set the initial state if there is none
         if self._state is None:
-            self.set_state(SplashScreen(self))
+           # self.set_state(SplashScreen(self))
+           self.set_state(TestFlo(self))
 
     def on_close(self):
         """
@@ -114,8 +116,15 @@ class Game(pyglet.window.Window):
         """
         This event triggers when a keyboard key is pressed
         """
-
         print("Key pressed : " + str(symbol))
+        self._state.pressed_buttons.append(symbol)
+
+    def on_key_release(self, symbol: int, modifiers: int) -> None:
+        """
+        This event triggers when a keyboard key is pressed
+        """
+        print("Key released : " + str(symbol))
+        self._state.pressed_buttons.remove(symbol)
 
     # ----- Application control methods -----
 

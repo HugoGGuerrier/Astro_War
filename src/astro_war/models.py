@@ -24,23 +24,26 @@ class Ship:
     orientation = None  # will decide the direction of ship/missiles
     power = None  # laser, blade, etc
     cannon = None  # coord of the cannon, calculated with orientation,x,y and the skin
+    sprite = None
 
     # var for calc
     rotation = 1  # we turn 1 degree by 1 degree
     move = 1  # we move 1 pix by 1 pix
 
-    def __init__(self, x, y, color):
+    def __init__(self, color, sprite):
         """
-        Create a ship with coord to place it and a color
+        Create a ship with coord to place it and a color (plus a sprite)
+        No need coord, will work directly on sprite x and y
         """
 
-        self.x = x
-        self.y = y
+        self.sprite = sprite
         self.hitboxes = None  # will depend of the image
         self.status = 2
         self.color = color
         self.orientation = 0  # didn't rotate yet
         self.cannon = None  # find the formula, certainly (self.x+lenght(skin))/2 if the cannon is centred
+
+
 
     def shoot(self):
         """
@@ -58,21 +61,24 @@ class Ship:
         the ship turn to the left
         """
 
-        self.orientation -= self.rotation  # in hour direction
+        self.sprite.rotation -= self.rotation
 
-    def rorateRight(self):
+        self.orientation -= self.rotation
+
+    def rotateRight(self):
         """
         the sihip turn to the right
         """
+        self.sprite.rotation += self.rotation
 
-        self.orientaion += self.rotation
+        self.orientation += self.rotation
 
     def fly(self):
         """
         called regularly, the ship goes straight
         """
-        self.x = self.move * math.cos(math.radians(self.orientation))  # check formula with visual
-        self.y = self.move * math.sin(math.radians(self.orientation))
+        self.sprite.y += self.move * math.cos(math.radians(self.orientation))
+        self.sprite.x += self.move * math.sin(math.radians(self.orientation))
         # check here if we collide smth?
 
     def powered(self, power):
