@@ -102,7 +102,7 @@ class Game(pyglet.window.Window):
 
         # Set the initial state if there is none
         if self._state is None:
-           # self.set_state(SplashScreen(self))
+        #    self.set_state(SplashScreen(self))
            self.set_state(TestFlo(self))
 
     def on_close(self):

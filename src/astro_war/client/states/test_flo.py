@@ -27,7 +27,7 @@ class TestFlo(BaseState):
         self._ship_image.image.anchor_x = self._ship_image.width/2
         self._ship_image.image.anchor_y = self._ship_image.height/2
 
-        self._missile_image = pyglet.sprite.Sprite(ResourcesManager.MISSILE_IMG)
+
        #65362 self._missile_image.image.anchor_x = self._missile_image.width / 2
        # self._missile_image.image.anchor_y = self._missile_image.height / 2
 
@@ -35,7 +35,7 @@ class TestFlo(BaseState):
         self.shade = True
         self.pressed_buttons = []
 
-        self.my_ship = Ship("blue", self._ship_image, self._missile_image)
+        self.my_ship = Ship("blue", self._ship_image)
 
     # ----- Class methods -----
 

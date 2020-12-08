@@ -3,6 +3,8 @@ import math
 import copy
 import pyglet
 
+from src.astro_war.client.resources_manager import ResourcesManager
+
 
 class Ship:
     """
@@ -33,13 +35,12 @@ class Ship:
     rotation = 1  # we turn 1 degree by 1 degree
     move = 1  # we move 1 pix by 1 pix
 
-    def __init__(self, color, sprite, missile_sprite):
+    def __init__(self, color, sprite):
         """
         Create a ship with coord to place it and a color (plus a sprite)
         No need coord, will work directly on sprite x and y
         """
 
-        self.missile_sprite = missile_sprite
         self.sprite = sprite
         self.hitboxes = None  # will depend of the image
         self.status = 2
@@ -68,7 +69,7 @@ class Ship:
                 math.radians(-self.orientation)) + self.sprite.x
             ycoord = (base_x - self.sprite.x) * math.sin(math.radians(-self.orientation)) + (base_y - self.sprite.y) * math.cos(
                 math.radians(-self.orientation)) + self.sprite.y
-            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color, self.missile_sprite))
+            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color))
 
     def rotateLeft(self):  # will be called while player press the button
         """
@@ -123,12 +124,12 @@ class Missile:
 
     move = 1  # we move 1 pix by 1 pix
 
-    def __init__(self, x, y, orientation, color, sprite):
+    def __init__(self, x, y, orientation, color):
         """
         create a missile, given initial coord, an orientation to go straight and a color to identify enemies
         """
 
-        self.sprite = sprite
+        self.sprite = pyglet.sprite.Sprite(ResourcesManager.MISSILE_IMG)
         self.sprite.x = x - self.sprite.width/2
         self.sprite.y = y
         self.sprite.rotation = orientation
