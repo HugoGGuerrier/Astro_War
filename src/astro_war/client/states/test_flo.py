@@ -44,7 +44,7 @@ class TestFlo(BaseState):
 
     def enter(self, args) -> None:
         # Play the menu music
-        SoundPlayer.play_music(self._menu_music)
+       # SoundPlayer.play_music(self._menu_music)
 
         # Scale the image
         Scaler.scale_sprite(self._ship_image)

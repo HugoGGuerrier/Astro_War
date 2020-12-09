@@ -62,14 +62,11 @@ class Ship:
             # for the self.y, we will have to change with the orientation, need the images to predict the formula
             # x′=(x−p) cos(θ)−(y−q) sin(θ) + p,
             # y′= (x−p) sin(θ) + (y−q) cos(θ) + q. #306 = primary location with anchor
-            base_x = self.sprite.x
-            base_y = self.sprite.y + self.sprite.height/2
-            print(self.sprite.y)
-            xcoord = (base_x - self.sprite.x) * math.cos(math.radians(-self.orientation)) - (base_y - self.sprite.y) * math.sin(
-                math.radians(-self.orientation)) + self.sprite.x
-            ycoord = (base_x - self.sprite.x) * math.sin(math.radians(-self.orientation)) + (base_y - self.sprite.y) * math.cos(
-                math.radians(-self.orientation)) + self.sprite.y
-            self.missile.append(Missile(xcoord, ycoord, self.orientation, self.color))
+            base_x = self.sprite.x - self.sprite.width / 2
+            base_y = self.sprite.y + self.sprite.height / 2
+            self.missile.append(Missile(base_x, base_y, self.orientation, self.color, self.sprite.x, self.sprite.y))
+
+
 
     def rotateLeft(self):  # will be called while player press the button
         """
@@ -124,18 +121,27 @@ class Missile:
 
     move = 1  # we move 1 pix by 1 pix
 
-    def __init__(self, x, y, orientation, color):
+    def __init__(self, x, y, orientation, color,p,q):
         """
         create a missile, given initial coord, an orientation to go straight and a color to identify enemies
         """
 
         self.sprite = pyglet.sprite.Sprite(ResourcesManager.MISSILE_IMG)
-        self.sprite.x = x - self.sprite.width/2
-        self.sprite.y = y
         self.sprite.rotation = orientation
         self.orientation = orientation
         self.color = color
         self.speed = None  # will be a variable base_speed
+
+        base_x = x + self.sprite.width/2
+        base_y = y
+        xcoord = (base_x - p) * math.cos(math.radians(-self.orientation)) - (base_y - q) * math.sin(
+            math.radians(-self.orientation)) + p
+        ycoord = (base_x - p) * math.sin(math.radians(-self.orientation)) + (
+                    base_y - q) * math.cos(
+            math.radians(-self.orientation)) + q
+
+        self.sprite.x = xcoord
+        self.sprite.y = ycoord
 
     def fly(self):
         """
