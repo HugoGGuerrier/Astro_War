@@ -1,4 +1,5 @@
 from .ui_element import UIElement
+from .border import Border
 
 import pyglet
 from pyglet.window import mouse
@@ -9,57 +10,33 @@ class Button(UIElement):
     This class represent a base button with default style and event handler
     """
 
-    def __init__(
-            self,
-            x: int = 0,
-            y: int = 0,
-            width: int = 200,
-            height: int = 50,
-            text: str = "Button",
-            font_name: str = None,
-            font_size: int = 12,
-            color: tuple = (150, 150, 150, 255),
-            lab_color: tuple = (255, 255, 255, 255),
-            border_color: tuple = (255, 255, 255, 255),
-            border_width: int = 1,
-            border_padding: int = 0
-    ):
+    def __init__(self):
         """
-        Create a button with the wanted parameters
-
-        params :
-            - x: int = The button x position, relative to the GUI position
-            - y: int = The button y position, relative to the GUI position
-            - width: int = The button width
-            - height: int = The button height
-            - text: str = The button text
-            - font_name: str = The font name for the button text
-            - font_size: int = The button font size
-            - color: tuple = The button background color
-            - lab_color: tuple = The button text color
-            - border_color: tuple = The button border color
-            - border_width: int = 1 = The width of the border
-            - border_padding: int = 0 = The space between border and button edge
+        Create a button with the default parameters
         """
 
         # Call the super constructor
-        super().__init__(x, y, width, height)
+        super().__init__(0, 0, 200, 50)
 
         # Assign personalisation attributes
-        self.text: str = text
-        self.font_name: str = font_name
-        self.font_size: int = font_size
-        self.bg_color: tuple = color
+        self.text: str = "Button"
+        self.font_name: str = None
+        self.font_size: int = 12
+
+        self.bg_color: tuple = (95, 95, 95, 255)
         self.bg_hover: tuple = (95, 95, 168, 255)
         self.bg_press: tuple = (60, 60, 60, 255)
-        self.label_color: tuple = lab_color
+
+        self.label_color: tuple = (255, 255, 255, 255)
         self.label_hover: tuple = None
         self.label_press: tuple = None
-        self.border_color: tuple = border_color
+
+        self.border_color: tuple = (255, 255, 255, 255)
         self.border_hover: tuple = None
         self.border_press: tuple = None
-        self.border_width: int = border_width
-        self.border_padding: int = border_padding
+        self.border_width: int = 0
+        self.border_padding: int = 0
+
         self.on_click = None
 
         # Assign internal attributes
@@ -67,7 +44,7 @@ class Button(UIElement):
         self._is_hovered: bool = False
         self._bg: pyglet.shapes.Rectangle = None
         self._label: pyglet.text.Label = None
-        self._borders: list = list()
+        self._border: Border = None
 
     # ----- Internal methods -----
 
@@ -99,8 +76,9 @@ class Button(UIElement):
                 self._is_hovered = True
 
                 # Set the background color
-                self._bg.color = self.bg_hover[:-1]
-                self._bg.opacity = self.bg_hover[-1] * self.opacity
+                if self.bg_hover is not None:
+                    self._bg.color = self.bg_hover[:-1]
+                    self._bg.opacity = self.bg_hover[-1] * self.opacity
 
                 # Set the label color
                 if self.label_hover is not None:
@@ -108,9 +86,7 @@ class Button(UIElement):
 
                 # Set the borders color
                 if self.border_hover is not None:
-                    for border in self._borders:
-                        border.color = self.border_hover[:-1]
-                        border.opacity = self.border_hover[-1] * self.opacity
+                    self._border.set_color(self.border_hover)
 
             elif self._is_hovered:
 
@@ -118,8 +94,9 @@ class Button(UIElement):
                 self._is_hovered = False
 
                 # Reset the background color
-                self._bg.color = self.bg_color[:-1]
-                self._bg.opacity = self.bg_color[-1] * self.opacity
+                if self.bg_hover is not None:
+                    self._bg.color = self.bg_color[:-1]
+                    self._bg.opacity = self.bg_color[-1] * self.opacity
 
                 # Reset the label color
                 if self.label_hover is not None:
@@ -127,9 +104,7 @@ class Button(UIElement):
 
                 # Reset the borders color
                 if self.border_hover is not None:
-                    for border in self._borders:
-                        border.color = self.border_color[:-1]
-                        border.opacity = self.border_color[-1] * self.opacity
+                    self._border.set_color(self.border_color)
 
     def on_mouse_drag(self, x: int, y: int, button: int, mod: int):
         # Just do the same as mouse move
@@ -141,14 +116,15 @@ class Button(UIElement):
         """
 
         # Check that the mouse is over the button and the click is the left
-        if button & mouse.LEFT and self._is_hover(x, y):
+        if button & mouse.LEFT and self._is_hovered:
 
             # Set the clicked to true
             self._is_clicked = True
 
             # Set the background color
-            self._bg.color = self.bg_press[:-1]
-            self._bg.opacity = self.bg_press[-1] * self.opacity
+            if self.bg_press is not None:
+                self._bg.color = self.bg_press[:-1]
+                self._bg.opacity = self.bg_press[-1] * self.opacity
 
             # Set the label color
             if self.label_press is not None:
@@ -156,9 +132,7 @@ class Button(UIElement):
 
             # Set the borders color
             if self.border_press is not None:
-                for border in self._borders:
-                    border.color = self.border_press[:-1]
-                    border.opacity = self.border_press[-1] * self.opacity
+                self._border.set_color(self.border_press)
 
     def on_mouse_release(self, x, y, button, mod):
         """
@@ -166,7 +140,7 @@ class Button(UIElement):
         """
 
         # Check that the click release is the left one
-        if button & mouse.LEFT:
+        if button & mouse.LEFT and self._is_clicked:
 
             # Set the clicked to false
             self._is_clicked = False
@@ -221,67 +195,19 @@ class Button(UIElement):
             group=pyglet.graphics.OrderedGroup(2, parent=self._group)
         )
 
-        # Create the borders
-
-        # --- Top
-        self._borders.append(
-            pyglet.shapes.Line(
-                x=(self.x + self.border_padding - self.border_width / 2) + gui_x,
-                y=(self.y + self.height - self.border_padding) + gui_y,
-                x2=(self.x + self.width - self.border_padding + self.border_width / 2) + gui_x,
-                y2=(self.y + self.height - self.border_padding) + gui_y,
-                color=self.border_color[:-1],
-                width=self.border_width,
-                batch=self._batch,
-                group=pyglet.graphics.OrderedGroup(1, parent=self._group)
-            )
+        # Create the border
+        self._border = Border(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(1, parent=self._group),
+            border_width=self.border_width
         )
-
-        # --- Right
-        self._borders.append(
-            pyglet.shapes.Line(
-                x=(self.x + self.width - self.border_padding) + gui_x,
-                y=(self.y + self.height - self.border_padding) + gui_y,
-                x2=(self.x + self.width - self.border_padding) + gui_x,
-                y2=(self.y + self.border_padding) + gui_y,
-                color=self.border_color[:-1],
-                width=self.border_width,
-                batch=self._batch,
-                group=pyglet.graphics.OrderedGroup(1, parent=self._group)
-            )
+        self._border.set_pos(
+            x=(self.x + self.border_padding) + gui_x,
+            y=(self.y + self.border_padding) + gui_y,
+            width=(self.width - self.border_padding * 2),
+            height=(self.height - self.border_padding * 2)
         )
-
-        # --- Bottom
-        self._borders.append(
-            pyglet.shapes.Line(
-                x=(self.x + self.border_padding - self.border_width / 2) + gui_x,
-                y=(self.y + self.border_padding) + gui_y,
-                x2=(self.x + self.width - self.border_padding + self.border_width / 2) + gui_x,
-                y2=(self.y + self.border_padding) + gui_y,
-                color=self.border_color[:-1],
-                width=self.border_width,
-                batch=self._batch,
-                group=pyglet.graphics.OrderedGroup(1, parent=self._group)
-            )
-        )
-
-        # --- Left
-        self._borders.append(
-            pyglet.shapes.Line(
-                x=(self.x + self.border_padding) + gui_x,
-                y=(self.y + self.height - self.border_padding) + gui_y,
-                x2=(self.x + self.border_padding) + gui_x,
-                y2=(self.y + self.border_padding) + gui_y,
-                color=self.border_color[:-1],
-                width=self.border_width,
-                batch=self._batch,
-                group=pyglet.graphics.OrderedGroup(1, parent=self._group)
-            )
-        )
-
-        # Set the borders opacity
-        for border in self._borders:
-            border.opacity = self.border_color[-1] * self.opacity
+        self._border.set_color(self.border_color)
 
     def rebuild(self, gui):
         """
@@ -313,6 +239,10 @@ class Button(UIElement):
         self._label.color = self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),)
 
         # Rebuild the borders
-        # TODO
-        for border in self._borders:
-            border.opacity = self.border_color[-1] * self.opacity
+        self._border.set_pos(
+            x=(self.x + self.border_padding) + gui_x,
+            y=(self.y + self.border_padding) + gui_y,
+            width=(self.width - self.border_padding * 2),
+            height=(self.height - self.border_padding * 2)
+        )
+        self._border.set_color(self.border_color)

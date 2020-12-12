@@ -1,4 +1,5 @@
 from src.astro_war.client.states.test_flo import TestFlo
+from src.astro_war.client.states.test_hugo import TestHugo
 from src.astro_war.config import Config
 from src.astro_war.bootstrapper import Bootstrapper
 from src.astro_war.client.scaler import Scaler
@@ -50,6 +51,10 @@ class Game(pyglet.window.Window):
         """
         Initialize the application
         """
+
+        # Set the pyglet options
+        print(pyglet.media.have_ffmpeg())
+        pyglet.options['search_local_libs'] = True
 
         # Create the clock
         self._clock = pyglet.clock.get_default()
@@ -103,7 +108,7 @@ class Game(pyglet.window.Window):
         # Set the initial state if there is none
         if self._state is None:
         #    self.set_state(SplashScreen(self))
-           self.set_state(TestFlo(self))
+            self.set_state(TestHugo(self))
 
     def on_close(self):
         """
@@ -161,11 +166,12 @@ class Game(pyglet.window.Window):
 
         params :
             - state: base_state.BaseState = The state to set
-            - **kwargs = Aguments for the next state
+            - **kwargs = Arguments for the next state
         """
 
         # Exit the previous state
         if self._state is not None:
+            print("--- Exit " + self._state.name + " state")
             self._state.exit()
 
         # Enter the next state

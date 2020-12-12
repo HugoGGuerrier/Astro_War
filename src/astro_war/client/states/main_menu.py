@@ -15,23 +15,24 @@ class MainMenuButton(pyglet_gui.Button):
     """
 
     def __init__(self, text, y):
-        super().__init__(
-            text=text,
-            x=0,
-            y=y,
-            width=Scaler.scale_length(200),
-            height=Scaler.scale_length(50),
-            color=Colors.MAIN_COLOR + (160,),
-            font_name="Munro",
-            font_size=Scaler.scale_length(20),
-            lab_color=(255, 255, 255, 255),
-            border_color=(255, 255, 255, 255),
-            border_width=Scaler.scale_length(2),
-            border_padding=Scaler.scale_length(5)
-        )
+        super().__init__()
+
+        # Set the attributes
+        self.width = Scaler.scale_length(200)
+        self.height = Scaler.scale_length(50)
+        self.y = y
         self.x = -(self.width // 2)
+
+        self.text = text
+        self.font_name = "Munro"
+        self.font_size = Scaler.scale_length(20)
+
+        self.bg_color = Colors.MAIN_COLOR + (160,)
         self.bg_hover = Colors.MAIN_COLOR + (215,)
         self.bg_press = Colors.MAIN_COLOR + (255,)
+
+        self.border_width = Scaler.scale_length(2)
+        self.border_padding = Scaler.scale_length(5)
 
 
 class MainMenu(BaseState):
