@@ -2,6 +2,7 @@ from .ui_element import UIElement
 from .border import Border
 
 import pyglet
+from pyglet.window import mouse
 
 
 class Slider(UIElement):
@@ -15,12 +16,12 @@ class Slider(UIElement):
         """
 
         # Call the super constructor
-        super().__init__(0, 0, 500, 40)
+        super().__init__(0, 0, 400, 40)
 
         # Set all customization attributes
         self.min_value: float = 0
         self.max_value: float = 1
-        self.init_value: float = 0
+        self.init_value: float = 0.5
 
         self.cursor_width: int = 20
         self.cursor_color: tuple = (95, 95, 95, 255)
@@ -30,11 +31,12 @@ class Slider(UIElement):
         self.border_color: tuple = (255, 255, 255, 255)
         self.border_hover: tuple = None
         self.border_press: tuple = None
-        self.border_width: int = 0
+        self.border_width: int = 4
 
         self.bar_width: int = 5
         self.empty_color: tuple = (255, 255, 255, 100)
-        self.full_color: tuple = (255, 255, 255, 100)
+        self.full_color: tuple = (255, 255, 255, 255)
+        self.show_bar_under_cursor: bool = False
 
         self.on_value_change = None
 
@@ -44,10 +46,15 @@ class Slider(UIElement):
         self._empty: pyglet.shapes.Line = None
         self._full: pyglet.shapes.Line = None
         self._value: float = self.init_value
+        self._gui_x: int = 0
+        self._gui_y: int = 0
+
+        self._is_hovered: bool = False
+        self._is_pressed: bool = False
 
     # ----- Internal methods -----
 
-    def _get_cursor_pos(self) -> float:
+    def _get_cursor_x(self) -> float:
         """
         Get the current cursor position by computing the value
 
@@ -55,7 +62,50 @@ class Slider(UIElement):
         """
 
         coef = (self._value - self.min_value) / (self.max_value - self.min_value)
-        return (self.width * coef) + self.x
+        return (self.width * coef) + self.x - self.cursor_width / 2
+
+    def _is_on_cursor(self, x: int, y: int) -> bool:
+        """
+        Get if the mouse is on the slider cursor
+
+        params :
+            - x: int = The mouse x position
+            - y: int = The mouse y position
+
+        return -> bool = If the mouse is on the cursor
+        """
+
+        cursor_x = self._get_cursor_x()
+        return (cursor_x <= x <= cursor_x + self.cursor_width) and (self.y <= y <= self.y + self.height)
+
+    def _update_visual(self):
+        """
+        Update the slider visual with the current value
+        """
+
+        # Compute the new position
+        cursor_x = self._get_cursor_x()
+
+        stop_full_x = cursor_x
+        stop_empty_x = cursor_x + self.cursor_width
+        if self.show_bar_under_cursor:
+            stop_full_x = cursor_x + self.cursor_width / 2
+            stop_empty_x = stop_full_x
+
+        # Update the cursor position
+        self._cursor.x = cursor_x + self._gui_x
+
+        # Update the border position
+        self._border.set_pos(
+            x=cursor_x + self._gui_x,
+            y=self._border.y,
+            width=self._border.width,
+            height=self._border.height
+        )
+
+        # Update the full and empty
+        self._full.x2 = stop_full_x + self._gui_x
+        self._empty.x = stop_empty_x + self._gui_x
 
     # ----- Widget control methods -----
 
@@ -85,8 +135,98 @@ class Slider(UIElement):
             self._value = value
 
         # Update the visual elements
+        self._update_visual()
 
     # ----- Event handling methods -----
+
+    def on_mouse_move(self, x: int, y: int):
+        """
+        Check the mouse move to make the hover effect
+        """
+
+        if not self._is_pressed:
+
+            if self._is_on_cursor(x, y):
+
+                # Set the hovered state to true
+                self._is_hovered = True
+
+                # Change the cursor color
+                if self.cursor_hover is not None:
+                    self._cursor.color = self.cursor_hover[:-1]
+                    self._cursor.opacity = self.cursor_hover[-1] * self.opacity
+
+                # Change the border color
+                if self.border_hover is not None:
+                    self._border.set_color(self.border_hover[:-1] + (self.border_hover[-1] * self.opacity,))
+
+            else:
+
+                # Set the hovered state to false
+                self._is_hovered = False
+
+                # Reset the cursor color
+                if self.cursor_hover is not None:
+                    self._cursor.color = self.cursor_color[:-1]
+                    self._cursor.opacity = self.cursor_color[-1] * self.opacity
+
+                # Reset the border color
+                if self.border_hover is not None:
+                    self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
+
+        else:
+
+            # Get the coef for the current mouse x
+            coef = (x - self.x) / (self.x + self.width - self.x)
+            coef = max(min(coef, 1.0), 0.0)
+
+            # Update the current value
+            self._value = (coef * (self.max_value - self.min_value)) + self.min_value
+
+            # Update the visual
+            self._update_visual()
+
+            # Call the function
+            if self.on_value_change is not None:
+                self.on_value_change(self._value)
+
+    def on_mouse_drag(self, x: int, y: int, button: int, mod: int):
+        # Just do the same as mouse move
+        self.on_mouse_move(x, y)
+
+    def on_mouse_press(self, x: int, y: int, button: int, mod: int):
+        """
+        Handle the mouse click
+        """
+
+        if button & mouse.LEFT:
+
+            if self._is_hovered:
+
+                # Set the pressed state to true
+                self._is_pressed = True
+
+                # Change the cursor color
+                if self.cursor_press is not None:
+                    self._cursor.color = self.cursor_press[:-1]
+                    self._cursor.opacity = self.cursor_press[-1] * self.opacity
+
+                # Change the border color
+                if self.border_press is not None:
+                    self._border.set_color(self.border_press[:-1] + (self.border_press[-1] * self.opacity,))
+
+    def on_mouse_release(self, x: int, y: int, button: int, mod: int):
+        """
+        Handle the click end
+        """
+
+        if button & mouse.LEFT:
+
+            if self._is_pressed:
+
+                # Set the pressed state to false and update the widget state
+                self._is_pressed = False
+                self.on_mouse_move(x, y)
 
     # ----- Element methods -----
 
@@ -103,13 +243,66 @@ class Slider(UIElement):
 
         # Get thee GUI position
         gui_x, gui_y = gui.get_pos()
+        self._gui_x = gui_x
+        self._gui_y = gui_y
+
+        # Get the computed position
+        cursor_x = self._get_cursor_x() + self.x
+
+        stop_full_x = cursor_x
+        stop_empty_x = cursor_x + self.cursor_width
+        if self.show_bar_under_cursor:
+            stop_full_x = cursor_x + self.cursor_width / 2
+            stop_empty_x = stop_full_x
 
         # Create the cursor
         self._cursor = pyglet.shapes.Rectangle(
-            x=self._get_cursor_pos() + self.x,
-            y=self.y,
+            x=cursor_x + gui_x,
+            y=self.y + gui_y,
             width=self.cursor_width,
             height=self.height,
+            color=self.cursor_color[:-1],
             batch=self._batch,
             group=pyglet.graphics.OrderedGroup(1, parent=self._group)
         )
+        self._cursor.opacity = self.cursor_color[-1] * self.opacity
+
+        # Create the cursor border
+        self._border = Border(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(2, self._group),
+            border_width=self.border_width
+        )
+        self._border.set_pos(
+            x=cursor_x + gui_x,
+            y=self.y + gui_y,
+            width=self.cursor_width,
+            height=self.height
+        )
+        self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
+
+        # Create the before line
+        self._full = pyglet.shapes.Line(
+            x=self.x + gui_x,
+            y=self.y + self.height / 2 + gui_y,
+            x2=stop_full_x + gui_x,
+            y2=self.y + self.height / 2 + gui_y,
+            color=self.full_color[:-1],
+            width=self.bar_width,
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(0, self._group)
+        )
+        self._full.opacity = self.full_color[-1] * self.opacity
+
+        # Create the after line
+        self._empty = pyglet.shapes.Line(
+            x=stop_empty_x + gui_x,
+            y=self.y + self.height / 2 + gui_y,
+            x2=self.x + self.width + gui_x,
+            y2=self.y + self.height / 2 + gui_y,
+            color=self.empty_color[:-1],
+            width=self.bar_width,
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(0, self._group)
+        )
+        self._empty.opacity = self.empty_color[-1] * self.opacity

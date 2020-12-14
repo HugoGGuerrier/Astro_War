@@ -15,6 +15,7 @@ class TestHugo(BaseState):
 
         # Create the interface widgets
         self.gui = pyglet_gui.GUI(self._game, self._batch, group)
+        self.gui.set_pos(10, 10)
         self.btn = pyglet_gui.Button()
 
         self.slider = pyglet_gui.Slider()

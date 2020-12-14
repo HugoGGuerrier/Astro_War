@@ -82,4 +82,4 @@ class ResourcesManager:
         ResourcesManager.MISSILE_IMG = ResourcesManager._load_image("missile.png")
 
         # Load sounds
-        # ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.ogg")
+        ResourcesManager.MENU_MUSIC = ResourcesManager._load_sound("menu.ogg")

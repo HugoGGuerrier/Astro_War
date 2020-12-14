@@ -86,7 +86,7 @@ class Button(UIElement):
 
                 # Set the borders color
                 if self.border_hover is not None:
-                    self._border.set_color(self.border_hover)
+                    self._border.set_color(self.border_hover[:-1] + (self.border_hover[-1] * self.opacity,))
 
             elif self._is_hovered:
 
@@ -104,7 +104,7 @@ class Button(UIElement):
 
                 # Reset the borders color
                 if self.border_hover is not None:
-                    self._border.set_color(self.border_color)
+                    self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
 
     def on_mouse_drag(self, x: int, y: int, button: int, mod: int):
         # Just do the same as mouse move
@@ -128,11 +128,11 @@ class Button(UIElement):
 
             # Set the label color
             if self.label_press is not None:
-                self._label.color = self.label_press
+                self._label.color = self.label_press[:-1] + (self.label_press[-1] * self.opacity,)
 
             # Set the borders color
             if self.border_press is not None:
-                self._border.set_color(self.border_press)
+                self._border.set_color(self.border_press[:-1] + (self.border_press[-1] * self.opacity,))
 
     def on_mouse_release(self, x, y, button, mod):
         """
@@ -207,7 +207,7 @@ class Button(UIElement):
             width=(self.width - self.border_padding * 2),
             height=(self.height - self.border_padding * 2)
         )
-        self._border.set_color(self.border_color)
+        self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
 
     def rebuild(self, gui):
         """
@@ -245,4 +245,4 @@ class Button(UIElement):
             width=(self.width - self.border_padding * 2),
             height=(self.height - self.border_padding * 2)
         )
-        self._border.set_color(self.border_color)
+        self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
