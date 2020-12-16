@@ -89,9 +89,9 @@ class Border:
 
         # --- Right
         self._lines[1].x = self.x + self.width
-        self._lines[1].y = self.y + self.height
+        self._lines[1].y = self.y + self.height - self.border_width / 2
         self._lines[1].x2 = self.x + self.width
-        self._lines[1].y2 = self.y
+        self._lines[1].y2 = self.y + self.border_width / 2
 
         # --- Bottom
         self._lines[2].x = self.x - self.border_width / 2
@@ -101,9 +101,9 @@ class Border:
 
         # --- Left
         self._lines[3].x = self.x
-        self._lines[3].y = self.y + self.height
+        self._lines[3].y = self.y + self.height - self.border_width / 2
         self._lines[3].x2 = self.x
-        self._lines[3].y2 = self.y
+        self._lines[3].y2 = self.y + self.border_width / 2
 
     def set_color(self, color: tuple):
         """
@@ -117,3 +117,11 @@ class Border:
         for line in self._lines:
             line.color = self.color[:-1]
             line.opacity = self.color[-1]
+
+    def delete(self):
+        """
+        Delete the border
+        """
+
+        for line in self._lines:
+            line.delete()

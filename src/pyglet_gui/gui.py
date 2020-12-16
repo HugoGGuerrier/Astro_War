@@ -75,6 +75,7 @@ class GUI:
 
     # ----- Elements -----
 
-    def add_element(self, elem):
+    def add_element(self, elem: UIElement):
+        elem.opacity = self._opacity
         elem.create_element(self)
         self._ui_elements.append(elem)

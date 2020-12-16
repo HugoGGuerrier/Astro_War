@@ -7,7 +7,7 @@ from pyglet.window import mouse
 
 class Slider(UIElement):
     """
-    This class represent a slider to select a value between 2
+    This class represent a slider to select a value between 2 other values
     """
 
     def __init__(self):
@@ -86,8 +86,8 @@ class Slider(UIElement):
         # Compute the new position
         cursor_x = self._get_cursor_x()
 
-        stop_full_x = cursor_x
-        stop_empty_x = cursor_x + self.cursor_width
+        stop_full_x = cursor_x - self.border_width / 2
+        stop_empty_x = cursor_x + self.cursor_width + self.border_width / 2
         if self.show_bar_under_cursor:
             stop_full_x = cursor_x + self.cursor_width / 2
             stop_empty_x = stop_full_x
@@ -249,8 +249,8 @@ class Slider(UIElement):
         # Get the computed position
         cursor_x = self._get_cursor_x() + self.x
 
-        stop_full_x = cursor_x
-        stop_empty_x = cursor_x + self.cursor_width
+        stop_full_x = cursor_x - self.border_width / 2
+        stop_empty_x = cursor_x + self.cursor_width + self.border_width / 2
         if self.show_bar_under_cursor:
             stop_full_x = cursor_x + self.cursor_width / 2
             stop_empty_x = stop_full_x
@@ -306,3 +306,13 @@ class Slider(UIElement):
             group=pyglet.graphics.OrderedGroup(0, self._group)
         )
         self._empty.opacity = self.empty_color[-1] * self.opacity
+
+    def rebuild(self, gui):
+        """
+        Rebuild the slider with the new GUI state
+
+        params :
+            - gui = The GUI
+        """
+
+

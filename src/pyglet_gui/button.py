@@ -246,3 +246,13 @@ class Button(UIElement):
             height=(self.height - self.border_padding * 2)
         )
         self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
+
+    def delete_element(self):
+        """
+        Remove the elements part
+        """
+
+        # Delete all graphical elements
+        self._bg.delete()
+        self._border.delete()
+        self._label.delete()
