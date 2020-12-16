@@ -239,6 +239,12 @@ class Button(UIElement):
         self._label.color = self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),)
 
         # Rebuild the borders
+        self._border.delete()
+        self._border = Border(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(1, parent=self._group),
+            border_width=self.border_width
+        )
         self._border.set_pos(
             x=(self.x + self.border_padding) + gui_x,
             y=(self.y + self.border_padding) + gui_y,

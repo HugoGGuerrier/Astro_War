@@ -315,4 +315,78 @@ class Slider(UIElement):
             - gui = The GUI
         """
 
+        # Get thee GUI position
+        gui_x, gui_y = gui.get_pos()
+        self._gui_x = gui_x
+        self._gui_y = gui_y
 
+        # Get the computed position
+        cursor_x = self._get_cursor_x() + self.x
+
+        stop_full_x = cursor_x - self.border_width / 2
+        stop_empty_x = cursor_x + self.cursor_width + self.border_width / 2
+        if self.show_bar_under_cursor:
+            stop_full_x = cursor_x + self.cursor_width / 2
+            stop_empty_x = stop_full_x
+
+        # Rebuild the cursor
+        self._cursor.x = cursor_x + gui_x
+        self._cursor.y = self.y + gui_y
+        self._cursor.width = self.cursor_width
+        self._cursor.height = self.height
+        self._cursor.color = self.cursor_color[:-1]
+        self._cursor.opacity = self.cursor_color[-1]
+
+        # Rebuild the border
+        self._border.delete()
+        self._border = Border(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(2, parent=self._group),
+            border_width=self.border_width
+        )
+        self._border.set_pos(
+            x=cursor_x + gui_x,
+            y=self.y + gui_y,
+            width=self.cursor_width,
+            height=self.height
+        )
+        self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
+
+        # Rebuild the before line
+        self._full.delete()
+        self._full = pyglet.shapes.Line(
+            x=self.x + gui_x,
+            y=self.y + self.height / 2 + gui_y,
+            x2=stop_full_x + gui_x,
+            y2=self.y + self.height / 2 + gui_y,
+            color=self.full_color[:-1],
+            width=self.bar_width,
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(0, self._group)
+        )
+        self._full.opacity = self.full_color[-1] * self.opacity
+
+        # Rebuild the after line
+        self._empty.delete()
+        self._empty = pyglet.shapes.Line(
+            x=stop_empty_x + gui_x,
+            y=self.y + self.height / 2 + gui_y,
+            x2=self.x + self.width + gui_x,
+            y2=self.y + self.height / 2 + gui_y,
+            color=self.empty_color[:-1],
+            width=self.bar_width,
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(0, self._group)
+        )
+        self._empty.opacity = self.empty_color[-1] * self.opacity
+
+    def delete_element(self):
+        """
+        Delete the element from the gui
+        """
+
+        # Delete all graphical elements
+        self._cursor.delete()
+        self._border.delete()
+        self._full.delete()
+        self._empty.delete()

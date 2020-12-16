@@ -79,3 +79,7 @@ class GUI:
         elem.opacity = self._opacity
         elem.create_element(self)
         self._ui_elements.append(elem)
+
+    def remove_element(self, elem: UIElement):
+        elem.delete_element()
+        self._ui_elements.remove(elem)
