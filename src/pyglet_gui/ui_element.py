@@ -31,6 +31,8 @@ class UIElement:
 
         self._batch: pyglet.graphics.Batch = None
         self._group: pyglet.graphics.Group = None
+        self._gui_x: int = 0
+        self._gui_y: int = 0
 
     # ----- Event handling methods -----
 
@@ -79,8 +81,11 @@ class UIElement:
             - gui : The parent GUI
         """
 
+        # Assign the gui attributes
         self._batch = gui.get_batch()
         self._group = gui.get_group()
+        self._gui_x = gui.get_pos()[0]
+        self._gui_y = gui.get_pos()[1]
 
     def rebuild(self, gui):
         """
@@ -90,7 +95,9 @@ class UIElement:
             - gui : The parent GUI
         """
 
-        pass
+        # Reassign the gui position
+        self._gui_x = gui.get_pos()[0]
+        self._gui_y = gui.get_pos()[1]
 
     def delete_element(self):
         """

@@ -16,15 +16,19 @@ class TestHugo(BaseState):
         # Create the interface widgets
         self.gui = pyglet_gui.GUI(self._game, self._batch, group)
         self.gui.set_pos(10, 10)
-        self.gui.set_opacity(128)
+
         self.btn = pyglet_gui.Button()
 
         self.slider = pyglet_gui.Slider()
         self.slider.y = 75
 
+        self.check = pyglet_gui.CheckBox()
+        self.check.y = 125
+
         # Add the gui elements
         self.gui.add_element(self.btn)
         self.gui.add_element(self.slider)
+        self.gui.add_element(self.check)
 
         # Test shapes :)
 

@@ -137,6 +137,10 @@ class Slider(UIElement):
         # Update the visual elements
         self._update_visual()
 
+        # Call the function
+        if self.on_value_change is not None:
+            self.on_value_change(self._value)
+
     # ----- Event handling methods -----
 
     def on_mouse_move(self, x: int, y: int):
@@ -241,11 +245,6 @@ class Slider(UIElement):
         # Call the super method
         super(Slider, self).create_element(gui)
 
-        # Get thee GUI position
-        gui_x, gui_y = gui.get_pos()
-        self._gui_x = gui_x
-        self._gui_y = gui_y
-
         # Get the computed position
         cursor_x = self._get_cursor_x() + self.x
 
@@ -257,8 +256,8 @@ class Slider(UIElement):
 
         # Create the cursor
         self._cursor = pyglet.shapes.Rectangle(
-            x=cursor_x + gui_x,
-            y=self.y + gui_y,
+            x=cursor_x + self._gui_x,
+            y=self.y + self._gui_y,
             width=self.cursor_width,
             height=self.height,
             color=self.cursor_color[:-1],
@@ -274,8 +273,8 @@ class Slider(UIElement):
             border_width=self.border_width
         )
         self._border.set_pos(
-            x=cursor_x + gui_x,
-            y=self.y + gui_y,
+            x=cursor_x + self._gui_x,
+            y=self.y + self._gui_y,
             width=self.cursor_width,
             height=self.height
         )
@@ -283,10 +282,10 @@ class Slider(UIElement):
 
         # Create the before line
         self._full = pyglet.shapes.Line(
-            x=self.x + gui_x,
-            y=self.y + self.height / 2 + gui_y,
-            x2=stop_full_x + gui_x,
-            y2=self.y + self.height / 2 + gui_y,
+            x=self.x + self._gui_x,
+            y=self.y + self.height / 2 + self._gui_y,
+            x2=stop_full_x + self._gui_x,
+            y2=self.y + self.height / 2 + self._gui_y,
             color=self.full_color[:-1],
             width=self.bar_width,
             batch=self._batch,
@@ -296,10 +295,10 @@ class Slider(UIElement):
 
         # Create the after line
         self._empty = pyglet.shapes.Line(
-            x=stop_empty_x + gui_x,
-            y=self.y + self.height / 2 + gui_y,
-            x2=self.x + self.width + gui_x,
-            y2=self.y + self.height / 2 + gui_y,
+            x=stop_empty_x + self._gui_x,
+            y=self.y + self.height / 2 + self._gui_y,
+            x2=self.x + self.width + self._gui_x,
+            y2=self.y + self.height / 2 + self._gui_y,
             color=self.empty_color[:-1],
             width=self.bar_width,
             batch=self._batch,
@@ -315,10 +314,8 @@ class Slider(UIElement):
             - gui = The GUI
         """
 
-        # Get thee GUI position
-        gui_x, gui_y = gui.get_pos()
-        self._gui_x = gui_x
-        self._gui_y = gui_y
+        # Call the super methods
+        super(Slider, self).rebuild(gui)
 
         # Get the computed position
         cursor_x = self._get_cursor_x() + self.x
@@ -330,8 +327,8 @@ class Slider(UIElement):
             stop_empty_x = stop_full_x
 
         # Rebuild the cursor
-        self._cursor.x = cursor_x + gui_x
-        self._cursor.y = self.y + gui_y
+        self._cursor.x = cursor_x + self._gui_x
+        self._cursor.y = self.y + self._gui_y
         self._cursor.width = self.cursor_width
         self._cursor.height = self.height
         self._cursor.color = self.cursor_color[:-1]
@@ -345,8 +342,8 @@ class Slider(UIElement):
             border_width=self.border_width
         )
         self._border.set_pos(
-            x=cursor_x + gui_x,
-            y=self.y + gui_y,
+            x=cursor_x + self._gui_x,
+            y=self.y + self._gui_y,
             width=self.cursor_width,
             height=self.height
         )
@@ -355,10 +352,10 @@ class Slider(UIElement):
         # Rebuild the before line
         self._full.delete()
         self._full = pyglet.shapes.Line(
-            x=self.x + gui_x,
-            y=self.y + self.height / 2 + gui_y,
-            x2=stop_full_x + gui_x,
-            y2=self.y + self.height / 2 + gui_y,
+            x=self.x + self._gui_x,
+            y=self.y + self.height / 2 + self._gui_y,
+            x2=stop_full_x + self._gui_x,
+            y2=self.y + self.height / 2 + self._gui_y,
             color=self.full_color[:-1],
             width=self.bar_width,
             batch=self._batch,
@@ -369,10 +366,10 @@ class Slider(UIElement):
         # Rebuild the after line
         self._empty.delete()
         self._empty = pyglet.shapes.Line(
-            x=stop_empty_x + gui_x,
-            y=self.y + self.height / 2 + gui_y,
-            x2=self.x + self.width + gui_x,
-            y2=self.y + self.height / 2 + gui_y,
+            x=stop_empty_x + self._gui_x,
+            y=self.y + self.height / 2 + self._gui_y,
+            x2=self.x + self.width + self._gui_x,
+            y2=self.y + self.height / 2 + self._gui_y,
             color=self.empty_color[:-1],
             width=self.bar_width,
             batch=self._batch,

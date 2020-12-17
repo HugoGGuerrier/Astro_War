@@ -166,13 +166,10 @@ class Button(UIElement):
         # Call the super method
         super(Button, self).create_element(gui)
 
-        # Get the gui attributes
-        gui_x, gui_y = gui.get_pos()
-
         # Create the background rectangle
         self._bg = pyglet.shapes.Rectangle(
-            x=self.x + gui_x,
-            y=self.y + gui_y,
+            x=self.x + self._gui_x,
+            y=self.y + self._gui_y,
             width=self.width,
             height=self.height,
             color=self.bg_color[:-1],
@@ -189,8 +186,8 @@ class Button(UIElement):
             color=self.label_color[:-1] + (round(self.label_color[-1] * self.opacity),),
             anchor_x="center",
             anchor_y="center",
-            x=(self.x + gui_x) + self.width // 2,
-            y=(self.y + gui_y) + self.height // 2,
+            x=(self.x + self._gui_x) + self.width // 2,
+            y=(self.y + self._gui_y) + self.height // 2,
             batch=self._batch,
             group=pyglet.graphics.OrderedGroup(2, parent=self._group)
         )
@@ -202,8 +199,8 @@ class Button(UIElement):
             border_width=self.border_width
         )
         self._border.set_pos(
-            x=(self.x + self.border_padding) + gui_x,
-            y=(self.y + self.border_padding) + gui_y,
+            x=(self.x + self.border_padding) + self._gui_x,
+            y=(self.y + self.border_padding) + self._gui_y,
             width=(self.width - self.border_padding * 2),
             height=(self.height - self.border_padding * 2)
         )
@@ -219,20 +216,20 @@ class Button(UIElement):
             - gui : The parent GUI
         """
 
-        # Get the gui attributes
-        gui_x, gui_y = gui.get_pos()
+        # Call the parent method
+        super(Button, self).rebuild(gui)
 
         # Rebuild the background
-        self._bg.x = self.x + gui_x
-        self._bg.y = self.y + gui_y
+        self._bg.x = self.x + self._gui_x
+        self._bg.y = self.y + self._gui_y
         self._bg.width = self.width
         self._bg.height = self.height
         self._bg.color = self.bg_color[:-1]
         self._bg.opacity = self.bg_color[-1] * self.opacity
 
         # Rebuild the label
-        self._label.x = (self.x + gui_x) + self.width // 2
-        self._label.y = (self.y + gui_y) + self.height // 2
+        self._label.x = (self.x + self._gui_x) + self.width // 2
+        self._label.y = (self.y + self._gui_y) + self.height // 2
         self._label.text = self.text
         self._label.font_name = self.font_name
         self._label.font_size = self.font_size
@@ -246,8 +243,8 @@ class Button(UIElement):
             border_width=self.border_width
         )
         self._border.set_pos(
-            x=(self.x + self.border_padding) + gui_x,
-            y=(self.y + self.border_padding) + gui_y,
+            x=(self.x + self.border_padding) + self._gui_x,
+            y=(self.y + self.border_padding) + self._gui_y,
             width=(self.width - self.border_padding * 2),
             height=(self.height - self.border_padding * 2)
         )
