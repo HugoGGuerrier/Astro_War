@@ -23,7 +23,7 @@ class TestHugo(BaseState):
         self.slider.y = 75
 
         self.check = pyglet_gui.CheckBox()
-        self.check.y = 125
+        self.check.y = 150
 
         # Add the gui elements
         self.gui.add_element(self.btn)

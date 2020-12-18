@@ -16,7 +16,7 @@ class CheckBox(UIElement):
         """
 
         # Call the super constructor
-        super().__init__(0, 0, 350, 40)
+        super().__init__(0, 0, 150, 40)
 
         # Assign personalisation attributes
         self.text: str = "Checkbox"
@@ -31,6 +31,7 @@ class CheckBox(UIElement):
         self.label_hover: tuple = None
         self.label_press: tuple = None
 
+        self.border_width: int = 4
         self.border_color: tuple = (255, 255, 255, 255)
         self.border_hover: tuple = None
         self.border_press: tuple = None
@@ -61,7 +62,15 @@ class CheckBox(UIElement):
             - y: int = The mouse y position relative to the GUI
         """
 
-        return False
+        case_x = self.x + (self.width - self.height)
+        return (case_x <= x <= self.x + self.width) and (self.y <= y <= self.y + self.height)
+
+    def _update_visual(self):
+        """
+        Update the checkbox visual
+        """
+
+        # TODO
 
     # ----- Widget control methods -----
 
@@ -102,5 +111,60 @@ class CheckBox(UIElement):
         # Compute the element's position
         case_x = self.x + (self.width - self.height)
 
+        # Create the label
+        self._label = pyglet.text.Label(
+            text=self.text,
+            font_name=self.font_name,
+            font_size=self.font_size,
+            color=self.label_color,
+            x=self.x + self._gui_x,
+            y=self.y + self.height / 2 + self._gui_y,
+            anchor_y="center",
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(0, parent=self._group)
+        )
+
         # Create the case rectangle
+        self._case = pyglet.shapes.Rectangle(
+            x=case_x + self._gui_x,
+            y=self.y + self._gui_y,
+            width=self.height,
+            height=self.height,
+            color=self.case_color[:-1],
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(1, parent=self._group)
+        )
+        self._case.opacity=self.case_color[-1] * self.opacity
+
+        # Create the case border
+        self._border = Border(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(2, parent=self._group),
+            border_width=self.border_width
+        )
+        self._border.set_pos(
+            x=case_x + self._gui_x,
+            y=self.y + self._gui_y,
+            width=self.height,
+            height=self.height,
+        )
+        self._border.set_color(self.border_color[:-1] + (self.border_color[-1] * self.opacity,))
+
+        # Create the case tick icon
+        self._tick = Cross(
+            batch=self._batch,
+            group=pyglet.graphics.OrderedGroup(3, parent=self._group),
+            line_width=4
+        )
+        self._tick.set_pos(
+            x=case_x + self._gui_x,
+            y=self.y + self._gui_y,
+            width=self.height,
+            height=self.height,
+        )
+        self._tick.set_color(self.tick_color)
+
+        # Update the visual
+        self.
+
 
