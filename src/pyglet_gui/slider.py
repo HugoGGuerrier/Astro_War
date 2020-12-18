@@ -135,7 +135,8 @@ class Slider(UIElement):
             self._value = value
 
         # Update the visual elements
-        self._update_visual()
+        if self._exists:
+            self._update_visual()
 
         # Call the function
         if self.on_value_change is not None:
@@ -381,6 +382,9 @@ class Slider(UIElement):
         """
         Delete the element from the gui
         """
+        
+        # Call the super method
+        super(Slider, self).delete_element()
 
         # Delete all graphical elements
         self._cursor.delete()

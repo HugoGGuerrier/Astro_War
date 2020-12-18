@@ -255,6 +255,9 @@ class Button(UIElement):
         Remove the elements part
         """
 
+        # Call the super method
+        super(Button, self).delete_element()
+
         # Delete all graphical elements
         self._bg.delete()
         self._border.delete()

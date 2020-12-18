@@ -20,7 +20,8 @@ class Icon:
         self.y: int = 0
         self.width: int = 20
         self.height: int = 20
-        self.color: tuple = (255, 255, 255, 255)
+        self.color: tuple = (255, 255, 255)
+        self.opacity: int = 255
 
         # Assign the intern attributes
         self._batch = batch
@@ -56,6 +57,17 @@ class Icon:
         # Update the attribute
         self.color = color
 
+    def set_opacity(self, opacity: int):
+        """
+        Set the icon opacity
+
+        params :
+            - opacity: int = The new icon opacity
+        """
+
+        # Update the attribute
+        self.opacity = opacity
+
     def delete(self):
         """
         Delete the icon
@@ -87,11 +99,11 @@ class Cross(Icon):
             x2=0,
             y2=0,
             width=self.line_width,
-            color=self.color[:-1],
+            color=self.color,
             batch=self._batch,
             group=self._group
         )
-        self._line1.opacity = self.color[-1]
+        self._line1.opacity = self.opacity
 
         self._line2: pyglet.shapes.Line = pyglet.shapes.Line(
             x=0,
@@ -99,11 +111,11 @@ class Cross(Icon):
             x2=0,
             y2=0,
             width=self.line_width,
-            color=self.color[:-1],
+            color=self.color,
             batch=self._batch,
             group=self._group
         )
-        self._line2.opacity = self.color[-1]
+        self._line2.opacity = self.opacity
 
     # ----- Setters -----
 
@@ -136,11 +148,22 @@ class Cross(Icon):
         super(Cross, self).set_color(color)
 
         # Set the lines color
-        self._line1.color = self.color[:-1]
-        self._line1.opacity = self.color[-1]
+        self._line1.color = self.color
 
-        self._line2.color = self.color[:-1]
-        self._line2.opacity = self.color[-1]
+        self._line2.color = self.color
+        
+    def set_opacity(self, opacity: int):
+        """
+        Set the cross opacity
+        """
+        
+        # Call the super method
+        super(Cross, self).set_opacity(opacity)
+
+        # Set the lines opacity
+        self._line1.opacity = opacity
+
+        self._line2.opacity = opacity
 
     def delete(self):
         """

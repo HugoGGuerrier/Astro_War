@@ -45,6 +45,7 @@ class CheckBox(UIElement):
 
         # Assign intern attributes
         self._is_hovered: bool = False
+        self._is_pressed: bool = False
         self._is_checked: bool = False
         self._case: pyglet.shapes.Rectangle = None
         self._tick: Icon = None
@@ -70,7 +71,18 @@ class CheckBox(UIElement):
         Update the checkbox visual
         """
 
-        # TODO
+        # Update the tick according to the state
+        if self._is_checked:
+
+            if self._is_pressed:
+                self._tick.set_opacity(self.tick_press[-1])
+            elif self._is_hovered:
+                self._tick.set_opacity(self.tick_hover[-1])
+            else:
+                self._tick.set_opacity(self.tick_color[-1])
+
+        else:
+            self._tick.set_opacity(0)
 
     # ----- Widget control methods -----
 
@@ -90,7 +102,8 @@ class CheckBox(UIElement):
         self._is_checked = is_checked
 
         # Update the visual
-        # TODO
+        if self._exists:
+            self._update_visual()
 
         # Call the function
         if self.on_checked is not None:
@@ -162,9 +175,10 @@ class CheckBox(UIElement):
             width=self.height,
             height=self.height,
         )
-        self._tick.set_color(self.tick_color)
+        self._tick.set_color(self.tick_color[:-1])
+        self._tick.set_opacity(self.tick_color[-1])
 
         # Update the visual
-        self.
+        self._update_visual()
 
 

@@ -33,6 +33,7 @@ class UIElement:
         self._group: pyglet.graphics.Group = None
         self._gui_x: int = 0
         self._gui_y: int = 0
+        self._exists: bool = False
 
     # ----- Event handling methods -----
 
@@ -86,6 +87,7 @@ class UIElement:
         self._group = gui.get_group()
         self._gui_x = gui.get_pos()[0]
         self._gui_y = gui.get_pos()[1]
+        self._exists = True
 
     def rebuild(self, gui):
         """
@@ -104,4 +106,4 @@ class UIElement:
         Delete all element parts from the batch
         """
 
-        pass
+        self._exists = False
