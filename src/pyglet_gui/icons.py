@@ -81,7 +81,7 @@ class Cross(Icon):
     This class represent an icon cross
     """
 
-    def __init__(self, batch: pyglet.graphics.Batch, group: pyglet.graphics.Group, line_width: int):
+    def __init__(self, batch: pyglet.graphics.Batch, group: pyglet.graphics.Group, **kwargs):
         """
         Create a new cross with the default parameters
         """
@@ -90,7 +90,7 @@ class Cross(Icon):
         super().__init__(batch, group)
 
         # Assign the specific customisation attributes
-        self.line_width: int = line_width
+        self.line_width: int = kwargs.get("line_width", 4)
 
         # Assign the specific intern attributes
         self._line1: pyglet.shapes.Line = pyglet.shapes.Line(
@@ -149,7 +149,6 @@ class Cross(Icon):
 
         # Set the lines color
         self._line1.color = self.color
-
         self._line2.color = self.color
         
     def set_opacity(self, opacity: int):
@@ -162,7 +161,6 @@ class Cross(Icon):
 
         # Set the lines opacity
         self._line1.opacity = opacity
-
         self._line2.opacity = opacity
 
     def delete(self):
@@ -173,3 +171,74 @@ class Cross(Icon):
         # Delete graphical elements
         self._line1.delete()
         self._line2.delete()
+
+
+class Square(Icon):
+    """
+    This class represent an icon square
+    """
+
+    def __init__(self, batch: pyglet.graphics.Batch, group: pyglet.graphics.Group, **kwargs):
+        """
+        Create a new square with the default parameters
+        """
+
+        # Call the super method
+        super().__init__(batch, group)
+
+        # Assign the internal attributes
+        self._square: pyglet.shapes.Rectangle = pyglet.shapes.Rectangle(
+            x=0,
+            y=0,
+            width=0,
+            height=0,
+            color=self.color,
+            batch=self._batch,
+            group=self._group
+        )
+
+    # ----- Setters -----
+
+    def set_pos(self, x: int, y: int, width: int, height: int):
+        """
+        Set the square position and size
+        """
+
+        # Call the super method
+        super(Square, self).set_pos(x, y, width, height)
+
+        # Set the shape parameters
+        self._square.x = self.x
+        self._square.y = self.y
+        self._square.width = self.width
+        self._square.height = self.height
+
+    def set_color(self, color: tuple):
+        """
+        Set the square color
+        """
+
+        # Call the super method
+        super(Square, self).set_color(color)
+
+        # Set the shape color
+        self._square.color = self.color
+
+    def set_opacity(self, opacity: int):
+        """
+        Set the square opacity
+        """
+
+        # Call the super method
+        super(Square, self).set_opacity(opacity)
+
+        # Set the square opacity
+        self._square.opacity = self.opacity
+
+    def delete(self):
+        """
+        Delete the square
+        """
+
+        # Delete the shape
+        self._square.delete()

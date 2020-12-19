@@ -40,7 +40,7 @@ class Button(UIElement):
         self.on_click = None
 
         # Assign internal attributes
-        self._is_clicked: bool = False
+        self._is_pressed: bool = False
         self._is_hovered: bool = False
         self._bg: pyglet.shapes.Rectangle = None
         self._label: pyglet.text.Label = None
@@ -67,7 +67,7 @@ class Button(UIElement):
         """
 
         # Check if the button is not clicked
-        if not self._is_clicked:
+        if not self._is_pressed:
 
             # Check if the button is hovered
             if self._is_hover(x, y):
@@ -119,7 +119,7 @@ class Button(UIElement):
         if button & mouse.LEFT and self._is_hovered:
 
             # Set the clicked to true
-            self._is_clicked = True
+            self._is_pressed = True
 
             # Set the background color
             if self.bg_press is not None:
@@ -140,10 +140,10 @@ class Button(UIElement):
         """
 
         # Check that the click release is the left one
-        if button & mouse.LEFT and self._is_clicked:
+        if button & mouse.LEFT and self._is_pressed:
 
             # Set the clicked to false
-            self._is_clicked = False
+            self._is_pressed = False
 
             # Call the button update
             self.on_mouse_move(x, y)
