@@ -1,3 +1,5 @@
+from src.astro_war.client.event import Event
+
 import pyglet
 
 
@@ -39,7 +41,7 @@ class BaseState:
 
         pass
 
-    def handle(self, event) -> None:
+    def handle(self, event: Event) -> None:
         """
         Handle every pygame events
 

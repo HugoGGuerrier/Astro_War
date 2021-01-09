@@ -5,7 +5,7 @@ import os
 import json
 
 
-class Bootstrapper:
+class SaveManager:
     """
     This class contains all methods to initialize the application client and server.
     """
@@ -17,18 +17,7 @@ class Bootstrapper:
         """
 
         # Put the configuration in a dictionary
-        save_dict: dict = {
-            "SCREEN_SIZE": Config.SCREEN_SIZE,
-            "FULL_SCREEN": Config.FULL_SCREEN,
-            "V_SYNC": Config.V_SYNC,
-
-            "FRAME_RATE": Config.FRAME_RATE,
-
-            "MUSIC_VOLUME": Config.MUSIC_VOLUME,
-            "SOUND_VOLUME": Config.SOUND_VOLUME,
-
-            "USER_NAME": Config.USER_NAME
-        }
+        save_dict = Config.get_save_dict()
 
         # Create a JSON string from the dictionary
         save_str = json.dumps(save_dict)
@@ -53,21 +42,12 @@ class Bootstrapper:
         save_dict: dict = json.loads(save_str)
 
         # Load the config from the dictionary
-        Config.SCREEN_SIZE = save_dict["SCREEN_SIZE"]
-        Config.FULL_SCREEN = save_dict["FULL_SCREEN"]
-        Config.V_SYNC = save_dict["V_SYNC"]
-
-        Config.FRAME_RATE = save_dict["FRAME_RATE"]
-
-        Config.MUSIC_VOLUME = save_dict["MUSIC_VOLUME"]
-        Config.SOUND_VOLUME = save_dict["SOUND_VOLUME"]
-
-        Config.USER_NAME = save_dict["USER_NAME"]
+        Config.set_save_dict(save_dict)
 
     @staticmethod
     def bootstrap(base_dir: str, server_only: bool) -> None:
         """
-        This method set all the application configuration
+        This method set all the application configuration, it should be launch before the game start
 
         params :
             - base_dir: str = The directory that contains the main.py file
@@ -96,10 +76,10 @@ class Bootstrapper:
         # Set the save file path
         Config.SAVE_FILE = Config.BASE_DIR + ".save"
 
-        # Load the configuration if it exists
+        # Load the save file if it exists
         if os.path.isfile(Config.SAVE_FILE):
             try:
-                Bootstrapper.load()
+                SaveManager.load()
             except json.decoder.JSONDecodeError as _:
                 print("The save file is corrupted !")
             except KeyError as _:

@@ -1,9 +1,9 @@
 from src.astro_war.client.states.test_flo import TestFlo
 from src.astro_war.client.states.test_hugo import TestHugo
 from src.astro_war.config import Config
-from src.astro_war.bootstrapper import Bootstrapper
+from src.astro_war.save_manager import SaveManager
 from src.astro_war.client.scaler import Scaler
-from src.astro_war.client.colors import Colors
+from src.astro_war.client.event import Event
 from src.astro_war.client.resources_manager import ResourcesManager
 from src.astro_war.client.sound_player import SoundPlayer
 from src.astro_war.client.states.base_state import BaseState
@@ -53,7 +53,6 @@ class Game(pyglet.window.Window):
         """
 
         # Set the pyglet options
-        print(pyglet.media.have_ffmpeg())
         pyglet.options['search_local_libs'] = True
 
         # Create the clock
@@ -91,7 +90,7 @@ class Game(pyglet.window.Window):
         # Set the loaded to true
         self._is_loaded = True
 
-    # ----- Event handling -----
+    # ----- Event handling and dispatching methods -----
 
     def on_show(self):
         """
@@ -115,22 +114,24 @@ class Game(pyglet.window.Window):
         Method that handle the game close
         """
 
+        # Close the game properly
         self.stop_app()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         """
         This event triggers when a keyboard key is pressed
         """
-        print("Key pressed : " + str(symbol))
-        self._state.pressed_buttons.append(symbol)
+
+        # Create the key press event and dispatch it
+        self._state.handle(Event(Event.KEY_PRESS, symbol=symbol, mod=modifiers))
 
     def on_key_release(self, symbol: int, modifiers: int) -> None:
         """
         This event triggers when a keyboard key is pressed
         """
-        print("Key released : " + str(symbol))
-        if symbol in self._state.pressed_buttons :
-            self._state.pressed_buttons.remove(symbol)
+
+        # Create the key press event and dispatch it
+        self._state.handle(Event(Event.KEY_RELEASE, symbol=symbol, mod=modifiers))
 
     # ----- Application control methods -----
 
@@ -191,6 +192,10 @@ class Game(pyglet.window.Window):
         # Start the app
         self._running = True
 
+        # Display the config
+        print("Configuration : " + str(Config.get_save_dict()))
+
+        # Start the pyglet application
         pyglet.app.run()
 
     def stop_app(self):
@@ -199,7 +204,7 @@ class Game(pyglet.window.Window):
         """
 
         # Cleanup the application
-        Bootstrapper.save()
+        SaveManager.save()
 
         # Clear the window
         self.clear()

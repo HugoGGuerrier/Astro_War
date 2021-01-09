@@ -1,4 +1,4 @@
-from src.astro_war.bootstrapper import Bootstrapper
+from src.astro_war.save_manager import SaveManager
 from src.astro_war.client import game
 
 import os
@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # Bootstrap the application
     base_dir = os.path.abspath(".") + os.path.sep
-    Bootstrapper.bootstrap(
+    SaveManager.bootstrap(
         base_dir=base_dir,
         server_only=server_only
     )
