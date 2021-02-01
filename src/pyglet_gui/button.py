@@ -42,6 +42,7 @@ class Button(UIElement):
         # Assign internal attributes
         self._is_pressed: bool = False
         self._is_hovered: bool = False
+
         self._bg: pyglet.shapes.Rectangle = None
         self._label: pyglet.text.Label = None
         self._border: Border = None
@@ -53,8 +54,8 @@ class Button(UIElement):
         Check if the point is in the button
 
         params :
-            - x: int = The gui relative x position
-            - y: int = The gui relative y position
+            - x: int = The gui relative x position relative to the GUI
+            - y: int = The gui relative y position relative to the GUI
         """
 
         return (self.x <= x <= self.x + self.width) and (self.y <= y <= self.y + self.height)
