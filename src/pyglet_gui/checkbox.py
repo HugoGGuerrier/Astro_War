@@ -67,7 +67,8 @@ class CheckBox(UIElement):
         """
 
         case_x = self.x + (self.width - self.height)
-        return (case_x <= x <= self.x + self.width) and (self.y <= y <= self.y + self.height)
+        return (case_x <= x <= self.x + self.width + self.border_width) and\
+               (self.y - self.border_width <= y <= self.y + self.height)
 
     def _update_visual(self):
         """

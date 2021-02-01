@@ -11,3 +11,4 @@ virtualenv
 
 # Project's files
 .save
+.cache

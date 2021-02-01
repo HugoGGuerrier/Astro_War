@@ -76,7 +76,8 @@ class Slider(UIElement):
         """
 
         cursor_x = self._get_cursor_x()
-        return (cursor_x <= x <= cursor_x + self.cursor_width) and (self.y <= y <= self.y + self.height)
+        return (cursor_x <= x <= cursor_x + self.cursor_width + self.border_width) and\
+               (self.y - self.border_width <= y <= self.y + self.height)
 
     def _update_visual(self):
         """

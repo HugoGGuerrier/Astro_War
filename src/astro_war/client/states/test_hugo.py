@@ -35,4 +35,3 @@ class TestHugo(BaseState):
     def render(self) -> None:
         # Render the menu
         self._batch.draw()
-        pass
