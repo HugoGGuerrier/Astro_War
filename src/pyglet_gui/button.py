@@ -58,7 +58,8 @@ class Button(UIElement):
             - y: int = The gui relative y position relative to the GUI
         """
 
-        return (self.x <= x <= self.x + self.width) and (self.y <= y <= self.y + self.height)
+        return (self.x <= x <= self.x + self.width + self.border_width) and\
+               (self.y - self.border_width <= y <= self.y + self.height)
 
     # ----- Event handling methods -----
 

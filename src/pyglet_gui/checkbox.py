@@ -64,6 +64,8 @@ class CheckBox(UIElement):
         params :
             - x: int = The mouse x position relative to the GUI
             - y: int = The mouse y position relative to the GUI
+
+        return -> bool = True if the button is hovered by the mouse
         """
 
         case_x = self.x + (self.width - self.height)

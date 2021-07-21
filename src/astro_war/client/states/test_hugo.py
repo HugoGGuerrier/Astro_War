@@ -25,6 +25,9 @@ class TestHugo(BaseState):
         self.check = pyglet_gui.CheckBox()
         self.check.y = 150
 
+        self.select = pyglet_gui.Select()
+        self.select.y = 215
+
         # Add the gui elements
         self.gui.add_element(self.btn)
         self.gui.add_element(self.slider)

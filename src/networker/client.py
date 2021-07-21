@@ -2,7 +2,7 @@
 This file contains all classes and functions to create a game client
 """
 
-from . import BUFFSIZE
+from . import BUFF_SIZE
 from .handler import Handler
 from .data_provider import DataProvider
 
@@ -69,6 +69,8 @@ class GameClient:
         params :
             - password: str = The server password
         """
+
+        self._server_password = password
 
     def add_handler(self, handler: Handler) -> None:
         """
@@ -153,7 +155,9 @@ class ClientReceiver(Thread):
         self._socket.bind(("0.0.0.0", self._port))
 
         while self._running:
-            data, address = self._socket.recvfrom(BUFFSIZE)
+            data, address = self._socket.recvfrom(BUFF_SIZE)
+
+            print(data.decode("utf8", "strict"))
 
         # Close the socket
         self._socket.close()
